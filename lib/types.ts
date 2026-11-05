@@ -21,6 +21,9 @@ export type Listing = {
   eventDate?: string;
   /** Miles from the visitor's town (or the one they chose), when known. */
   miles?: number;
+  /** Listing coordinates; only set on the single-listing fetch. */
+  lat?: number;
+  lng?: number;
   featured?: boolean;
   featuredUntil?: string;
 };

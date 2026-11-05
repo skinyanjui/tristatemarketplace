@@ -11,6 +11,9 @@ import { artFor } from "@/components/ListingArt";
 import { SaveButton } from "@/components/SaveButton";
 import { categoryOf } from "@/lib/categories";
 import { getListing } from "@/lib/listings";
+import { glance } from "@/lib/glance";
+import { DEFAULT_TOWN, TOWN_BY_ID, milesBetween, nearestTown } from "@/lib/places";
+import { headers } from "next/headers";
 
 export async function generateMetadata({ params }: PageProps<"/listing/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -23,6 +26,20 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
   const l = await getListing(id);
   if (!l) notFound();
   const cat = categoryOf(l.kind);
+  // Distance from the visitor's nearest known town (request location headers), else Evansville.
+  let miles: number | undefined;
+  if (l.lat !== undefined && l.lng !== undefined) {
+    let origin = TOWN_BY_ID[DEFAULT_TOWN];
+    const h = await headers();
+    const la = Number(h.get("x-vercel-ip-latitude")), lo = Number(h.get("x-vercel-ip-longitude"));
+    if (h.get("x-vercel-ip-latitude") && Number.isFinite(la) && Number.isFinite(lo)) {
+      const n = nearestTown(la, lo);
+      if (n.miles <= 150) origin = n.town;
+    }
+    miles = milesBetween(origin.lat, origin.lng, l.lat, l.lng);
+  }
+  const facts = glance(l, miles);
+  const shown = new Set(facts.map((f) => f.from).filter(Boolean));
   const initials = l.seller.name.split(" ").map((w) => w[0]).join("").slice(0, 2);
 
   return (
@@ -45,6 +62,13 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
               <span className="dprice">{l.price}</span>
               {!l.sold && <a href="#contact" className="btn"><Icon name={cat.action.icon} size={16} color="#fff" />{cat.action.short}</a>}
             </div>
+            {facts.length > 1 && (
+              <dl className="glance" aria-label="At a glance">
+                {facts.map((f) => (
+                  <div key={f.label} className={f.label === "Away" ? "far" : undefined}><dt>{f.label}</dt><dd title={f.value}>{f.value}</dd></div>
+                ))}
+              </dl>
+            )}
           </div>
           <section className="section">
             <h2>Description</h2>
@@ -54,7 +78,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
             <h2>Details</h2>
             <dl className="facts">
               {l.condition && <div><dt>{CONDITION_LABEL[l.kind] ?? "Condition"}</dt><dd>{l.condition}</dd></div>}
-              {l.details.map(([k, v]) => (
+              {l.details.filter(([k]) => !shown.has(k)).map(([k, v]) => (
                 <div key={k}><dt>{k}</dt><dd>{v}</dd></div>
               ))}
             </dl>

@@ -498,3 +498,18 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
 .cfact { margin: 0; font-size: var(--fs-sm); line-height: 18px; font-weight: 500; color: var(--label2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card .place { font-weight: 500; }
 .place .miles { color: var(--label2); font-weight: 500; }
+
+/* ===== glance strip (agent 1) ===== */
+.glance { margin: 4px 0 0; padding: 0; display: flex; gap: 6px; width: 100%; }
+.glance > div { flex: 1 1 0; min-width: 0; background: var(--surface); border-radius: 12px; padding: 8px; box-shadow: 0 0 0 1px var(--ring-soft); }
+.glance dt { font-size: var(--fs-cap); font-weight: 500; line-height: 16px; color: var(--label2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.glance dd { margin: 2px 0 0; font-size: var(--fs-ui); font-weight: 600; line-height: 20px; color: var(--label); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: lining-nums tabular-nums; }
+.glance > .far { flex: 0 0 auto; }
+@media (max-width: 400px) { .glance > div { padding: 8px 6px; } .glance dd { font-size: var(--fs-sm); } }
+@media (min-width: 560px) {
+  .glance > .far { flex: 1 1 0; }
+  .glance { gap: 8px; }
+  .glance > div { padding: 10px 14px; }
+  .glance dd { font-size: var(--fs-body); line-height: 22px; }
+}
+/* ===== end glance strip ===== */
