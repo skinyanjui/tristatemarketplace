@@ -55,14 +55,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 /* ---------- Top nav ---------- */
 .nav-wrap {
   position: sticky; top: 0; z-index: 20;
-  background: var(--nav-bg); color: var(--nav-fg);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+  background: var(--glass);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 0.5px 0 var(--hair);
 }
-.nav-wrap .search svg { color: var(--nav-dim); }
-.nav-wrap .search input { background: var(--nav-fill); color: var(--nav-fg); }
-.nav-wrap .search input::placeholder { color: var(--nav-dim); }
-.nav-wrap .chip { background: var(--nav-fill); color: var(--nav-fg); box-shadow: none; }
-.nav-wrap .chip[aria-pressed="true"], .nav-wrap .chip[aria-current="true"] { background: var(--accent-fill); color: #fff; }
 .nav { display: flex; align-items: center; gap: 12px 24px; width: 100%; padding: 10px 24px; }
 .brand { flex: none; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; gap: 10px; }
 .brand-mark { width: 28px; height: 28px; border-radius: 8px; background: var(--accent-fill); display: grid; place-items: center; }
