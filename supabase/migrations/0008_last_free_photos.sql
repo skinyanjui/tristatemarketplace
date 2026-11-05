@@ -1,0 +1,2 @@
+update public.tm_listings set photos = array['/listings/moving-boxes.jpg','/listings/moving-boxes-2.jpg'], title = 'Free: moving boxes in several sizes, 30+ boxes', description = 'Thirty-plus sturdy moving boxes in several sizes, ready for pickup. Packing paper too.' where id = 'free-boxes';
+update public.tm_listings set photos = array['/listings/boys-clothes.jpg'], title = 'Boys clothing lot, sizes 4T to 6, 40 pieces', description = 'Forty pieces of boys clothing, collared shirts, tees and winter coats included.' where id = 'boys-lot';
