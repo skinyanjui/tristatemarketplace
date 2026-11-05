@@ -10,8 +10,8 @@ export type Category = {
 
 /** What the main button says and does. Everything opens the message form except directions, which opens a map. */
 export type Action = { label: string; short: string; tiny?: string; icon: Icon; ask: string; map?: boolean };
-const call: Action = { label: "Message seller", short: "Message", tiny: "Ask", icon: "msg", ask: "Hi, is this still available? When could I take a look?" };
-const msg: Action = { label: "Message seller", short: "Message", tiny: "Ask", icon: "msg", ask: "Hi, is this still available?" };
+const call: Action = { label: "Message seller", short: "Message", icon: "msg", ask: "Hi, is this still available? When could I take a look?" };
+const msg: Action = { label: "Message seller", short: "Message", icon: "msg", ask: "Hi, is this still available?" };
 
 export const CATEGORIES: Category[] = [
   { id: "car", label: "Cars", color: "#1b4f9c", action: call },

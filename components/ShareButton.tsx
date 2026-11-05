@@ -16,8 +16,8 @@ export function ShareButton({ title }: { title: string }) {
     } catch { /* cancelled or blocked: nothing to do */ }
   }
   return (
-    <button type="button" className="btn btn-ghost" onClick={share} aria-live="polite">
-      {copied ? <><Icon name="check" size={16} />Link copied</> : <><Icon name="share" size={16} />Share</>}
+    <button type="button" className="btn btn-ghost share" onClick={share} aria-live="polite" aria-label="Share this listing">
+      {copied ? <><Icon name="check" size={16} />Link copied</> : <><Icon name="share" size={16} /><span className="share-label">Share</span></>}
     </button>
   );
 }

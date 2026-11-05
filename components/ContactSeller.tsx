@@ -23,14 +23,14 @@ export function ContactSeller({ listingId, sellerId, action, catId, place, sold 
     </div>
   );
   if (!open) return (
-    <div className="next">
+    <div className="next cta">
       <button className="btn btn-lg" onClick={() => setOpen(true)}><Icon name={action.map ? "msg" : action.icon} size={18} color="#fff" />{action.map ? "Message seller" : action.label}</button>
       {action.map && place && <a className="btn btn-lg btn-ghost" href={mapsUrl(place)} target="_blank" rel="noopener noreferrer"><Icon name="nav" size={18} />Get directions</a>}
     </div>
   );
 
   return (
-    <AuthGate next={`/listing/${listingId}`} note="Sign in with your email so the seller can reply. No password to remember!">
+    <AuthGate next={`/listing/${listingId}`} note="So the seller can reply to you.">
       {(s) => s.user.id === sellerId ? (
         <div className="next"><div className="notice">This is your own listing, so there is nobody to message.</div><Link href="/account" className="btn btn-lg">Manage my listings</Link></div>
       ) : (

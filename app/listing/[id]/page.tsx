@@ -34,15 +34,13 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
             <SaveButton id={l.id} title={l.title} />
           </Gallery>
           <div className="section">
-            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", width: "100%" }}>
+            <div className="metarow">
               <span className="pill" style={{ position: "static", background: cat.color, color: "#fff" }}>{cat.label}</span>
               {l.sold && <span className="pill" style={{ position: "static", background: "var(--label)", color: "var(--surface)" }}>Sold</span>}
-              <span style={{ marginLeft: "auto" }}><ShareButton title={l.title} /></span>
+              <span className="muted metaplace"><Icon name="pin" size={14} /><span>{l.place} · {l.posted}</span></span>
+              <ShareButton title={l.title} />
             </div>
             <h1 className="dtitle">{l.title}</h1>
-            <div className="muted" style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <Icon name="pin" size={14} />{l.place} · {l.posted}
-            </div>
             <div className="mprice">
               <span className="dprice">{l.price}</span>
               {!l.sold && <a href="#contact" className="btn"><Icon name={cat.action.icon} size={16} color="#fff" />{cat.action.short}</a>}
@@ -72,10 +70,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
           <ContactSeller listingId={l.id} sellerId={l.sellerId ?? null} action={cat.action} catId={cat.id} place={l.place} sold={l.sold} />
           <div className="seller">
             <span className="avatar" aria-hidden="true">{initials}</span>
-            <div>
-              <div style={{ fontWeight: 600 }}>{l.seller.name}</div>
-              <div className="muted">{l.seller.meta}</div>
-            </div>
+            <div className="sellername"><strong>{l.seller.name}</strong><span className="muted"> · {l.seller.meta}</span></div>
           </div>
           <ReportListing listingId={l.id} />
         </aside>

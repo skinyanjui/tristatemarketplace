@@ -36,6 +36,7 @@ export function SignIn({ next = "/account", note, title = "Sign in" }: { next?: 
     <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%", maxWidth: 420 }}>
       <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: "-0.01em" }}>{title}</h2>
       {note && <p style={{ margin: 0, color: "var(--label2)" }}>{note}</p>}
+      <p className="muted" style={{ margin: 0 }}>Free. We email you a one-time link, so there is no password.</p>
       <div className="field">
         <label htmlFor="email">Email</label>
         <input id="email" type="email" required autoComplete="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />

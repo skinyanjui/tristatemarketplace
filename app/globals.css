@@ -294,9 +294,9 @@ a:not([class]) { color: var(--accent-text); }
   .act .sm { display: inline; }
   .act span { padding: 0 11px; gap: 0; }
   .act svg { display: none; }
-  .price { font-size: 17px; letter-spacing: -0.03em; }
+  .price { font-size: 16px; letter-spacing: -0.03em; }
   .card-body { padding-inline: 10px; }
-  .act span { padding: 0 10px; }
+  .act span { padding: 0 9px; font-size: 12.5px; }
 }
 @container (max-width: 172px) {
   .price { font-size: 14.5px; letter-spacing: -0.04em; }
@@ -313,3 +313,32 @@ a:not([class]) { color: var(--accent-text); }
   .keep { gap: 8px; }
   .keep a { flex-direction: column; gap: 6px; padding: 12px 6px; font-size: 12.5px; text-align: center; min-height: 72px; }
 }
+
+/* ---------- Compact on phones: fewer rows, same information ---------- */
+.metarow { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; }
+.metaplace { display: flex; align-items: center; gap: 5px; min-width: 0; flex: 1; }
+.metaplace svg { flex: none; }
+.metaplace span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.metarow .share { margin-left: auto; flex: none; }
+@media (max-width: 900px) {
+  .panel { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px 14px; padding: 14px 16px; }
+  .panel > * { grid-column: 1 / -1; }
+  .panel > .dprice { grid-column: 1; grid-row: 1; }
+  .panel > .cta { grid-column: 2; grid-row: 1; width: auto; }
+  .panel > .cta .btn { width: auto; padding: 0 22px; }
+  .panel > .seller { grid-column: 1; grid-row: 2; }
+  .panel > .rep { grid-column: 2; grid-row: 2; justify-self: end; font-size: 13px; }
+  .dgrid { gap: 16px; }
+  .section { gap: 8px; }
+  .facts { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .facts div { padding: 8px 12px; }
+}
+@media (max-width: 719px) {
+  .share .share-label { display: none; }
+  .share { width: 44px; padding: 0; }
+  .dwrap { gap: 12px; padding-top: 8px; }
+  .seller .avatar { width: 34px; height: 34px; font-size: 13px; }
+}
+
+.sellername { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+.seller { min-width: 0; }

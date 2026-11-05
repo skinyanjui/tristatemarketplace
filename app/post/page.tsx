@@ -112,8 +112,9 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
             </select>
           </div>
         </div>
+        <div className="row">
         {(cat === "event" || cat === "sale") && (
-          <div className="field">
+          <div className="field" style={{ flex: "0 1 auto" }}>
             <label htmlFor="date">Date</label>
             <input id="date" name="date" type="date" className="input" required min={localToday()} />
           </div>
@@ -123,6 +124,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
           <input id="place" name="place" maxLength={80} onChange={(e) => setKnown(!e.target.value || !!townFor(e.target.value))} className="input" required placeholder="Start typing a town, like Newburgh, IN" list="towns" autoComplete="off" />
           {!known && <small className="muted">We cannot measure distance for that town yet, so it will not show up in Distance searches.</small>}
           <datalist id="towns">{TOWNS.map((t) => <option key={t.id} value={t.name} />)}</datalist>
+        </div>
         </div>
         <div className="field">
           <label htmlFor="desc">Description</label>
@@ -140,7 +142,7 @@ export default function PostPage() {
   return (
     <main className="form">
       <h1>Post a listing</h1>
-      <AuthGate next="/post" title="Sign in to post a listing" note="We will email you a link, so there is no password to remember.">
+      <AuthGate next="/post" title="Sign in to post a listing" note="So you can manage, renew and mark it sold later.">
         {(s) => <PostForm uid={s.user.id} email={s.user.email ?? "neighbor"} />}
       </AuthGate>
     </main>

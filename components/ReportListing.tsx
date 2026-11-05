@@ -11,7 +11,7 @@ export function ReportListing({ listingId }: { listingId: string }) {
   const [err, setErr] = useState("");
 
   if (state === "sent") return <div className="notice" role="status">Thanks for looking out for the community. We will review this listing.</div>;
-  if (!open) return <button type="button" className="linkbtn" onClick={() => setOpen(true)}>Report this listing</button>;
+  if (!open) return <button type="button" className="linkbtn rep" aria-label="Report this listing" onClick={() => setOpen(true)}>Report</button>;
   return (
     <form
       style={{ display: "flex", flexDirection: "column", gap: 10 }}
