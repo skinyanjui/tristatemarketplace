@@ -1,5 +1,6 @@
 "use client";
 
+import { Notice } from "./Notice";
 import { useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
@@ -10,7 +11,7 @@ export function ReportListing({ listingId }: { listingId: string }) {
   const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
   const [err, setErr] = useState("");
 
-  if (state === "sent") return <div className="notice" role="status">Thanks for looking out for the community. We will review this listing.</div>;
+  if (state === "sent") return <Notice tone="ok">Thanks for looking out for the community. We will review this listing.</Notice>;
   if (!open) return <button type="button" className="linkbtn" onClick={() => setOpen(true)}>Report this listing</button>;
   return (
     <form
@@ -31,7 +32,7 @@ export function ReportListing({ listingId }: { listingId: string }) {
         <label htmlFor="details">Details (optional)</label>
         <textarea id="details" name="details" className="input" rows={3} maxLength={1000} />
       </div>
-      {err && <div className="notice" role="alert">{err}</div>}
+      {err && <Notice tone="bad">{err}</Notice>}
       <div style={{ display: "flex", gap: 8 }}>
         <button className="btn" disabled={state === "sending"}>{state === "sending" ? "Sending…" : "Send report"}</button>
         <button type="button" className="btn" onClick={() => setOpen(false)}>Cancel</button>

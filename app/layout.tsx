@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Footer } from "@/components/Footer";
 import { Nav } from "@/components/Nav";
 import { TabBar } from "@/components/TabBar";
+import { Toaster } from "@/components/Toaster";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </Suspense>
         {children}
         <Footer />
+        <Toaster />
         <Suspense fallback={null}>
           <TabBar />
         </Suspense>

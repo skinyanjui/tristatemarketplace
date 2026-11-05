@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Notice } from "./Notice";
 import { AuthGate } from "./AuthGate";
 import { ReportsReview } from "./ReportsReview";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -56,26 +57,26 @@ function Mine({ uid }: { uid: string }) {
     load();
   }
 
-  if (err) return <div className="notice" role="alert">{err}</div>;
+  if (err) return <Notice tone="bad">{err}</Notice>;
   if (!rows) return <div className="notice">Loading…</div>;
   if (!rows.length) return <div className="notice">Nothing posted yet. Ready to sell something? <Link href="/post">Post one</Link>.</div>;
   return (
     <>
-    {note && <div className="notice" role="status">{note}</div>}
+    {note && <Notice tone="ok">{note}</Notice>}
     <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
       {rows.map((r) => (
         <li key={r.id} className="notice" style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
           <span style={{ flex: 1, minWidth: 180 }}>
             <Link href={`/listing/${r.id}`}><strong>{r.title}</strong></Link><br />
-            {categoryOf(r.kind).label} · {r.price || "No price"} · {r.status}
-            {r.status !== "removed" && (new Date(r.expires_at) < new Date() ? " · Expired, hidden from the site" : daysLeft(r.expires_at) <= 14 ? ` · Expires in ${daysLeft(r.expires_at)} days` : "")}
+            {categoryOf(r.kind).label} · {r.price || "No price"} · <span className={`tag ${r.status === "active" ? "tag-ok" : r.status === "removed" ? "tag-bad" : "tag-quiet"}`}>{r.status === "active" ? "Live" : r.status === "sold" ? "Sold" : r.status === "removed" ? "Removed" : r.status}</span>
+            {r.status !== "removed" && (new Date(r.expires_at) < new Date() ? <> · <span className="tag tag-bad">Expired, hidden from the site</span></> : daysLeft(r.expires_at) <= 14 ? <> · <span className="tag tag-warn">Expires in {daysLeft(r.expires_at)} days</span></> : null)}
             {r.featured_until && new Date(r.featured_until) > new Date() && ` · Featured until ${new Date(r.featured_until).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
           </span>
           {r.status !== "removed" && (new Date(r.expires_at) < new Date() || daysLeft(r.expires_at) <= 14) && <button className="btn" onClick={() => renew(r.id)}>Renew</button>}
           {r.status === "removed" && <span className="muted">Removed by moderators</span>}
           {r.status === "active" && <button className="btn" onClick={() => feature(r.id)}>{r.featured_until && new Date(r.featured_until) > new Date() ? "Extend" : "Feature"}</button>}
           {r.status !== "removed" && <button className="btn" onClick={() => setStatus(r.id, r.status === "active" ? "sold" : "active")}>{r.status === "active" ? "Mark sold" : "Relist"}</button>}
-          <button className="btn" onClick={() => remove(r.id)} onBlur={() => setConfirming(null)}>{confirming === r.id ? "Tap again to delete" : "Delete"}</button>
+          <button className={`btn btn-danger${confirming === r.id ? " armed" : ""}`} onClick={() => remove(r.id)} onBlur={() => setConfirming(null)}>{confirming === r.id ? "Tap again to delete for good" : "Delete"}</button>
         </li>
       ))}
     </ul>

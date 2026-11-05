@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { Icon } from "./Icon";
+import { toast } from "./Toaster";
 
 const KEY = "tm-saved";
 const listeners = new Set<() => void>();
@@ -28,8 +29,10 @@ export function SaveButton({ id, title }: { id: string; title: string }) {
 
   function toggle() {
     const ids = new Set(JSON.parse(read()) as string[]);
-    if (ids.has(id)) ids.delete(id);
+    const was = ids.has(id);
+    if (was) ids.delete(id);
     else ids.add(id);
+    if (was) toast("Removed from saved"); else toast("Saved on this device", { href: "/saved", cta: "View saved" });
     try {
       localStorage.setItem(KEY, JSON.stringify([...ids]));
     } catch {

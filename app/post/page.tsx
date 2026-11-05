@@ -2,7 +2,9 @@
 
 import { localToday } from "@/lib/dates";
 import { TOWNS, townFor } from "@/lib/places";
+import Link from "next/link";
 import { useRef, useState } from "react";
+import { Notice } from "@/components/Notice";
 import { useRouter } from "next/navigation";
 import { AuthGate } from "@/components/AuthGate";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -132,8 +134,12 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
         </div>
       </section>
 
-      {error && <div className="notice" role="alert">{error}</div>}
-      <button type="submit" className="btn btn-lg" disabled={busy}>{busy ? "Posting…" : "Post listing"}</button>
+      <label className="consent">
+        <input type="checkbox" name="confirm" required />
+        <span>I own this or have the right to sell it, it is legal to sell, and I agree to the <Link href="/terms" target="_blank">Terms</Link>. Never include bank details or ID numbers.</span>
+      </label>
+      {error && <Notice tone="bad">{error}</Notice>}
+      <button type="submit" className="btn btn-lg" disabled={busy}>{busy ? <><span className="spinner" />Posting…</> : "Post listing"}</button>
     </form>
   );
 }

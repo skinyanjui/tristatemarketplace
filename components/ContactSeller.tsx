@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { AuthGate } from "./AuthGate";
 import { Icon } from "./Icon";
+import { Notice } from "./Notice";
+import { toast } from "./Toaster";
 import { mapsUrl, type Action } from "@/lib/categories";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
@@ -13,11 +15,11 @@ export function ContactSeller({ listingId, sellerId, action, catId, place, sold 
   const [err, setErr] = useState("");
 
   const more = <Link href={`/?cat=${catId}`} className="btn btn-lg btn-ghost">See similar listings</Link>;
-  if (sold) return <div className="next"><div className="notice">This one has been sold, but there is more where it came from.</div>{more}</div>;
-  if (!sellerId) return <div className="next"><div className="notice">This is a sample listing, so there is nobody to message. Real listings from your neighbors are a tap away.</div>{more}</div>;
+  if (sold) return <div className="next"><Notice tone="info">This one has been sold, but there is more where it came from.</Notice>{more}</div>;
+  if (!sellerId) return <div className="next"><Notice tone="info">This is a sample listing, so there is nobody to message. Real listings from your neighbors are a tap away.</Notice>{more}</div>;
   if (state === "sent") return (
     <div className="next">
-      <div className="notice" role="status">Message sent! The seller will see it in their account and can reply to your email.</div>
+      <Notice tone="ok"><strong>Message sent.</strong> The seller will see it in their account and can reply to your email.</Notice>
       <Link href="/" className="btn btn-lg">Keep browsing</Link>
       <Link href="/saved" className="btn btn-lg btn-ghost">View my saved items</Link>
     </div>
@@ -32,7 +34,7 @@ export function ContactSeller({ listingId, sellerId, action, catId, place, sold 
   return (
     <AuthGate next={`/listing/${listingId}`} note="So the seller can reply to you.">
       {(s) => s.user.id === sellerId ? (
-        <div className="next"><div className="notice">This is your own listing, so there is nobody to message.</div><Link href="/account" className="btn btn-lg">Manage my listings</Link></div>
+        <div className="next"><Notice tone="info">This is your own listing, so there is nobody to message.</Notice><Link href="/account" className="btn btn-lg">Manage my listings</Link></div>
       ) : (
         <form
           style={{ display: "flex", flexDirection: "column", gap: 12 }}
@@ -41,15 +43,16 @@ export function ContactSeller({ listingId, sellerId, action, catId, place, sold 
             setState("sending"); setErr("");
             const body = String(new FormData(e.currentTarget).get("body") ?? "").trim();
             const { error } = await supabaseBrowser().from("tm_messages").insert({ listing_id: listingId, seller_id: sellerId, sender_email: s.user.email, body });
-            if (error) { setErr(error.code === "42501" ? "This listing is no longer taking messages. It may have sold or expired." : error.message); setState("idle"); } else setState("sent");
+            if (error) { setErr(error.code === "42501" ? "This listing is no longer taking messages. It may have sold or expired." : error.message); setState("idle"); } else { setState("sent"); toast("Message sent"); }
           }}
         >
+          <Notice tone="warn"><strong>Stay safe.</strong> Meet in a public place and see it before you pay. Never send deposits, gift cards or wire transfers. <Link href="/safety" target="_blank">Safety tips</Link></Notice>
           <div className="field">
             <label htmlFor="body">Message to seller</label>
             <textarea id="body" name="body" className="input" rows={4} required minLength={2} maxLength={2000} defaultValue={action.ask} />
           </div>
-          {err && <div className="notice" role="alert">{err}</div>}
-          <button className="btn btn-lg" disabled={state === "sending"}>{state === "sending" ? "Sending…" : <><Icon name="msg" size={18} color="#fff" />Send message</>}</button>
+          {err && <Notice tone="bad">{err}</Notice>}
+          <button className="btn btn-lg" disabled={state === "sending"}>{state === "sending" ? <><span className="spinner" />Sending…</> : <><Icon name="msg" size={18} color="#fff" />Send message</>}</button>
           <button type="button" className="btn btn-lg btn-ghost" onClick={() => setOpen(false)}>Cancel</button>
         </form>
       )}

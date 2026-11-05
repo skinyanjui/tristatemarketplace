@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import Link from "next/link";
+import { Notice } from "./Notice";
 import type { Listing } from "@/lib/types";
 import { ListingCard } from "./ListingCard";
 
@@ -25,7 +26,7 @@ export function SavedList({ all }: { all: Listing[] }) {
   const gone = ids.size - saved.length;
   return (
     <>
-      {gone > 0 && <div className="notice" style={{ marginBottom: 12 }}>{gone} saved {gone === 1 ? "listing is" : "listings are"} no longer available (sold, expired or removed).</div>}
+      {gone > 0 && <Notice tone="info" className="mb">{gone} saved {gone === 1 ? "listing is" : "listings are"} no longer available (sold, expired or removed).</Notice>}
       <div className="grid">
         {saved.map((l) => <ListingCard key={l.id} listing={l} />)}
       </div>
