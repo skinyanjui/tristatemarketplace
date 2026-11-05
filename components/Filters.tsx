@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SortMenu } from "./SortMenu";
+import { DEFAULT_TOWN, RADII, TOWNS, TOWN_BY_ID } from "@/lib/places";
 
 const SORTS = [
   { value: "new", label: "Newest first" },
@@ -28,6 +29,16 @@ export function Filters() {
   }, [open]);
   const min = params.get("min") ?? "";
   const max = params.get("max") ?? "";
+  const near = params.get("near") ?? "";
+  const within = params.get("within") ?? "";
+  const [distOpen, setDistOpen] = useState(false);
+  const dist = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!distOpen) return;
+    const away = (e: MouseEvent) => { if (!dist.current?.contains(e.target as Node)) setDistOpen(false); };
+    document.addEventListener("mousedown", away);
+    return () => document.removeEventListener("mousedown", away);
+  }, [distOpen]);
   const cat = params.get("cat");
   const fallback = cat === "event" || cat === "sale" ? "soon" : "new";
   const sort = params.get("sort") ?? fallback;
@@ -45,6 +56,8 @@ export function Filters() {
   const tokens: { label: string; clear: Record<string, string> }[] = [];
   if (min) tokens.push({ label: `From $${Number(min).toLocaleString()}`, clear: { min: "" } });
   if (max) tokens.push({ label: `Up to $${Number(max).toLocaleString()}`, clear: { max: "" } });
+
+  if (within && TOWN_BY_ID[near]) tokens.push({ label: `Within ${within} mi of ${TOWN_BY_ID[near].name.split(",")[0]}`, clear: { near: "", within: "" } });
 
   return (
     <>
@@ -71,6 +84,35 @@ export function Filters() {
                 <input id="max" name="max" className="input" inputMode="numeric" pattern="[0-9]*" defaultValue={max} placeholder="Any" />
               </div>
               <button className="btn">Apply</button>
+            </form>
+          )}
+        </div>
+        <div className="sortmenu" ref={dist} onKeyDown={(e) => { if (e.key === "Escape") setDistOpen(false); }}>
+          <button type="button" className="chip" aria-expanded={distOpen} aria-haspopup="dialog" onClick={() => setDistOpen((o) => !o)}>Distance</button>
+          {distOpen && (
+            <form
+              className="sortmenu-pop pricepop"
+              aria-label="Distance"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const fd = new FormData(e.currentTarget);
+                set({ near: String(fd.get("near") ?? ""), within: String(fd.get("within") ?? "") });
+                setDistOpen(false);
+              }}
+            >
+              <div className="field">
+                <label htmlFor="within">How far?</label>
+                <select id="within" name="within" className="input" defaultValue={within || "25"}>
+                  {RADII.map((r) => <option key={r} value={r}>{r} miles</option>)}
+                </select>
+              </div>
+              <div className="field">
+                <label htmlFor="near">From</label>
+                <select id="near" name="near" className="input" defaultValue={near || DEFAULT_TOWN}>
+                  {TOWNS.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
+                </select>
+              </div>
+              <button className="btn">Show nearby</button>
             </form>
           )}
         </div>

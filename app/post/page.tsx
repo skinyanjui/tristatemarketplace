@@ -1,5 +1,6 @@
 "use client";
 
+import { TOWNS, townFor } from "@/lib/places";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthGate } from "@/components/AuthGate";
@@ -53,7 +54,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
           const { data, error: err } = await sb.from("tm_listings").insert({
             seller_id: uid, seller_name: email.split("@")[0], kind: cat,
             title: String(fd.get("title")).trim(), place: String(fd.get("place")).trim(), price,
-            condition: String(fd.get("cond") ?? ""), event_date: (cat === "event" || cat === "sale") ? String(fd.get("date") || "") || null : null, description: String(fd.get("desc") ?? "").trim(), photos,
+            condition: String(fd.get("cond") ?? ""), lat: townFor(String(fd.get("place") ?? ""))?.lat ?? null, lng: townFor(String(fd.get("place") ?? ""))?.lng ?? null, event_date: (cat === "event" || cat === "sale") ? String(fd.get("date") || "") || null : null, description: String(fd.get("desc") ?? "").trim(), photos,
           }).select("id").single();
           if (err) throw err;
           router.push(`/listing/${data.id}`);
@@ -108,7 +109,8 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
         )}
         <div className="field">
           <label htmlFor="place">Location</label>
-          <input id="place" name="place" className="input" required placeholder="City, state or ZIP" />
+          <input id="place" name="place" className="input" required placeholder="Start typing a town, like Newburgh, IN" list="towns" autoComplete="off" />
+          <datalist id="towns">{TOWNS.map((t) => <option key={t.id} value={t.name} />)}</datalist>
         </div>
         <div className="field">
           <label htmlFor="desc">Description</label>

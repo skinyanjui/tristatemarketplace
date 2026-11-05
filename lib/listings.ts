@@ -1,3 +1,4 @@
+import { TOWN_BY_ID } from "./places";
 import { supabaseServer } from "./supabase/client";
 import type { Listing } from "./types";
 
@@ -29,13 +30,19 @@ export function fromRow(r: Row): Listing {
 export type Sort = "new" | "old" | "soon" | "low" | "high" | "az" | "za";
 export const PAGE_SIZE = 48;
 
-export type Opts = { q?: string; cat?: string; min?: number; max?: number; sort?: Sort; page?: number };
+export type Opts = { q?: string; cat?: string; min?: number; max?: number; sort?: Sort; page?: number; near?: string; within?: number };
 
 /** One page of listings. Sold listings stay visible but sort after active ones. */
 export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; total: number; page: number; pages: number }> {
   const page = Math.max(1, Math.floor(opts.page ?? 1));
   const from = (page - 1) * PAGE_SIZE;
   let query = supabaseServer().from("tm_listings").select(COLUMNS, { count: "exact" }).in("status", ["active", "sold"]);
+  const town = opts.near ? TOWN_BY_ID[opts.near] : undefined;
+  if (town && opts.within) {
+    const { data: ids, error: nearErr } = await supabaseServer().rpc("tm_near", { c_lat: town.lat, c_lng: town.lng, miles: opts.within });
+    if (nearErr) throw new Error(`Could not measure distance: ${nearErr.message}`);
+    query = query.in("id", (ids as string[]).length ? (ids as string[]) : ["-"]);
+  }
   if (opts.cat && opts.cat !== "all") query = query.eq("kind", opts.cat);
   const q = (opts.q ?? "").trim().replace(/[%,()*]/g, " ");
   if (q) query = query.or(`title.ilike.%${q}%,place.ilike.%${q}%,kind.ilike.%${q}%,description.ilike.%${q}%`);
