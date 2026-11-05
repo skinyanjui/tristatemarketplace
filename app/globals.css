@@ -93,7 +93,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 /* ---------- Page + grid ---------- */
 .wrap { width: 100%; padding: 24px 24px 64px; display: flex; flex-direction: column; gap: 16px; }
 .count { font-size: 13px; color: var(--label2); }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; align-items: start; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; align-items: start; }
 .empty { padding: 64px 16px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; color: var(--label2); }
 .empty strong { color: var(--label); font-size: 16px; }
 
@@ -108,16 +108,16 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .card-link { position: absolute; inset: 0; }
 .pill {
   position: absolute; display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 9999px;
-  font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; max-width: calc(100% - 16px);
+  font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; max-width: calc(100% - 24px);
 }
-.pill-condition { top: 8px; left: 8px; height: 26px; font-size: 12px; background: var(--surface); box-shadow: 0 0 0 1px var(--ring-soft); max-width: calc(100% - 56px); }
-.pill-kind { bottom: 8px; left: 8px; color: #fff; }
-.save { position: absolute; top: 2px; right: 2px; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; display: grid; place-items: center; }
-.save span { width: 30px; height: 30px; border-radius: 9999px; background: var(--glass); box-shadow: 0 0 0 1px var(--ring-soft); display: grid; place-items: center; }
-.card-body { padding: 8px 12px 10px; display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 0; }
+.pill-condition { top: 12px; left: 12px; height: 24px; font-size: 12px; background: var(--surface); box-shadow: 0 0 0 1px var(--ring-soft); max-width: calc(100% - 64px); }
+.pill-kind { bottom: 12px; left: 12px; color: #fff; }
+.save { position: absolute; top: 2px; right: 6px; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; display: grid; place-items: center; }
+.save span { width: 32px; height: 32px; border-radius: 9999px; background: var(--glass); box-shadow: 0 0 0 1px var(--ring-soft); display: grid; place-items: center; }
+.card-body { position: relative; padding: 8px 12px 10px; display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 0; }
 .card-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 36px; }
-.price { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; margin: -8px 0; font-size: 20px; line-height: 28px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.act { flex: none; width: 44px; height: 44px; margin: -4px -6px -4px 0; display: grid; place-items: center; }
+.price { display: inline-flex; align-items: center; min-height: 44px; margin: -8px 0; font-size: 20px; line-height: 28px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.act { position: relative; z-index: 1; flex: none; width: 44px; height: 44px; margin: -4px -4px -4px 0; display: grid; place-items: center; }
 .act span { width: 36px; height: 36px; border-radius: 9999px; background: var(--accent); display: grid; place-items: center; }
 .place { display: flex; align-items: center; gap: 4px; font-size: 13px; line-height: 18px; color: var(--label2); min-width: 0; }
 .place span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -216,3 +216,5 @@ textarea.input { height: auto; padding: 12px; line-height: 24px; resize: vertica
 .prose h2 { margin: 12px 0 0; font-size: 17px; }
 .prose p { margin: 0; line-height: 1.6; }
 @media (max-width: 719px) { .foot { padding-bottom: 88px; } }
+
+#sort { height: 36px; font-size: 13px; font-weight: 500; border-radius: 9999px; padding: 0 12px; }

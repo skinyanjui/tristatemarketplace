@@ -13,13 +13,14 @@ export function ListingCard({ listing }: { listing: Listing }) {
       <div className="card-photo">
         <ListingImage listing={listing} />
         <Link href={href} className="card-link" aria-label={listing.title} />
-        {listing.condition && <span className="pill pill-condition">{listing.condition}</span>}
+        {listing.condition && <span className="pill pill-condition">{listing.condition.replace(/^Used - /, "")}</span>}
         <SaveButton id={listing.id} title={listing.title} />
         <span className="pill pill-kind" style={{ background: cat.color }}>{cat.label}</span>
       </div>
       <div className="card-body">
+        <Link href={href} className="card-link" aria-hidden="true" tabIndex={-1} />
         <div className="card-row">
-          <Link href={href} className="price">{listing.price}</Link>
+          <span className="price">{listing.price}</span>
           <Link href={`${href}#contact`} className="act" aria-label={`${cat.action.label}: ${listing.title}`}>
             <span><Icon name={cat.action.icon} size={18} color="#fff" /></span>
           </Link>
