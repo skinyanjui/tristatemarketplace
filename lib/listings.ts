@@ -29,7 +29,7 @@ export function fromRow(r: Row): Listing {
   };
 }
 
-export type Sort = "new" | "old" | "best" | "soon" | "low" | "high" | "az" | "za";
+export type Sort = "new" | "old" | "best" | "near" | "soon" | "low" | "high" | "az" | "za";
 export const PAGE_SIZE = 48;
 
 export type Opts = { q?: string; cat?: string; min?: number; max?: number; sort?: Sort; page?: number; near?: string; within?: number };
@@ -41,10 +41,13 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
   const sb = supabaseServer();
   const town = opts.near ? TOWN_BY_ID[opts.near] : undefined;
   let nearIds: string[] | null = null;
+  let nearOrder: Map<string, number> | null = null;
   if (town && opts.within) {
-    const { data, error: nearErr } = await sb.rpc("tm_near", { c_lat: town.lat, c_lng: town.lng, miles: opts.within });
+    const { data, error: nearErr } = await sb.rpc("tm_near_ranked", { c_lat: town.lat, c_lng: town.lng, miles: opts.within });
     if (nearErr) throw new Error(`Could not measure distance: ${nearErr.message}`);
-    nearIds = (data as string[]).length ? (data as string[]) : ["-"];
+    const hits = (data ?? []) as { id: string; dist: number }[];
+    nearIds = hits.length ? hits.map((h) => h.id) : ["-"];
+    nearOrder = new Map(hits.map((h, i) => [h.id, i]));
   }
   const q = (opts.q ?? "").trim().slice(0, 100);
   // Ranked full-text search (stems, synonyms, prefixes, typo tolerance) runs in the database.
@@ -82,16 +85,18 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
   if (opts.sort === "low" || opts.sort === "high") query = query.order("price_value", { ascending: opts.sort === "low", nullsFirst: false });
   if (opts.sort === "soon") query = query.order("event_date", { ascending: true, nullsFirst: false });
   if (opts.sort === "az" || opts.sort === "za") query = query.order("title", { ascending: opts.sort === "az" });
-  const byRank = !!rank && opts.sort === "best";
+  // Best match (search) and Closest first (distance) are ordered in code, over the whole filtered set.
+  const order = opts.sort === "near" && nearOrder ? nearOrder : opts.sort === "best" ? rank : null;
+  const byRank = !!order;
   query = query.order("created_at", { ascending: opts.sort === "old" });
   if (!byRank) query = query.range(from, from + PAGE_SIZE - 1);
   const { data, error, count } = await query;
   if (error) throw new Error(`Could not load listings: ${error.message}`);
   const total = (count ?? 0) + featured.length;
   let items = (data as unknown as Row[]).map(fromRow);
-  if (byRank && rank) {
+  if (byRank && order) {
     // Best match first; sold listings sink below active ones with the same relevance bucket.
-    items = items.sort((a, b) => Number(!!a.sold) - Number(!!b.sold) || (rank.get(a.id) ?? 0) - (rank.get(b.id) ?? 0)).slice(from, from + PAGE_SIZE);
+    items = items.sort((a, b) => Number(!!a.sold) - Number(!!b.sold) || (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0)).slice(from, from + PAGE_SIZE);
   }
   return { items: page === 1 ? [...featured, ...items] : items, total, page, pages: Math.max(1, Math.ceil((byRank ? (count ?? 0) : (count ?? 0)) / PAGE_SIZE)) };
 }

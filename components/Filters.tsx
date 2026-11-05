@@ -41,8 +41,9 @@ export function Filters() {
   }, [distOpen]);
   const cat = params.get("cat");
   const q = params.get("q");
-  const fallback = q ? "best" : cat === "event" || cat === "sale" ? "soon" : "new";
-  const sort = params.get("sort") ?? fallback;
+  const fallback = q ? "best" : near && within && TOWN_BY_ID[near] ? "near" : cat === "event" || cat === "sale" ? "soon" : "new";
+  const rawSort = params.get("sort");
+  const sort = rawSort && !(rawSort === "near" && fallback !== "near" && !(within && TOWN_BY_ID[near])) ? rawSort : fallback;
 
   function set(next: Record<string, string>) {
     const sp = new URLSearchParams(params.toString());
@@ -59,7 +60,7 @@ export function Filters() {
   if (min) tokens.push({ label: `From $${Number(min).toLocaleString()}`, clear: { min: "" } });
   if (max) tokens.push({ label: `Up to $${Number(max).toLocaleString()}`, clear: { max: "" } });
 
-  if (within && TOWN_BY_ID[near]) tokens.push({ label: `Within ${within} mi of ${TOWN_BY_ID[near].name.split(",")[0]}`, clear: { near: "", within: "" } });
+  if (within && TOWN_BY_ID[near]) tokens.push({ label: `Within ${within} mi of ${TOWN_BY_ID[near].name.split(",")[0]}`, clear: { near: "", within: "", ...(rawSort === "near" ? { sort: "" } : {}) } });
 
   return (
     <>
@@ -118,7 +119,7 @@ export function Filters() {
             </form>
           )}
         </div>
-        <SortMenu label="Sort by" options={q ? [{ value: "best", label: "Best match" }, ...SORTS] : SORTS} value={sort} onChange={(v) => set({ sort: v })} />
+        <SortMenu label="Sort by" options={[...(q ? [{ value: "best", label: "Best match" }] : []), ...(within && TOWN_BY_ID[near] ? [{ value: "near", label: "Closest first" }] : []), ...SORTS]} value={sort} onChange={(v) => set({ sort: v })} />
         {tokens.map((t) => (
           <button key={t.label} type="button" className="chip" onClick={() => set(t.clear)} aria-label={`Clear: ${t.label}`}>{t.label} ✕</button>
         ))}
