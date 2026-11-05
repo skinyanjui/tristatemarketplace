@@ -740,3 +740,10 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
 @media (max-width: 1100px) { .toolbar { gap: 4px 10px; } }
 .home { padding-top: 6px; gap: 8px; }
 @media (max-width: 1100px) { .toolbar { gap: 7px 10px; } }
+
+/* Scrollers clip their children, so leave room for each chip's 1px ring on every side (margins keep the layout size). */
+.chips { padding: 4px 3px; margin: -3px -3px; }
+.towns { padding: 3px; margin: -3px; }
+.toolbar > .filters { padding: 3px; margin: -3px; }
+@media (min-width: 1101px) { .toolbar > .towns { padding: 3px; } }
+.toolbar > .towns, .toolbar > .filters { padding: 3px; margin: -3px; }
