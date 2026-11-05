@@ -16,7 +16,7 @@ export default function Credits() {
   return (
     <Prose title="Photo credits">
       <p>Some sample listings use freely licensed photos from Wikimedia Commons. Thank you to these photographers.</p>
-      <ul style={{ margin: 0, paddingLeft: 20, display: "flex", flexDirection: "column", gap: 8 }}>
+      <ul className="credits" style={{ margin: 0, paddingLeft: 20, display: "flex", flexDirection: "column", gap: 8 }}>
         {credits.map((c) => (
           <li key={c.file}>
             <a href={c.url}>{c.title}</a> by {c.artist},{" "}

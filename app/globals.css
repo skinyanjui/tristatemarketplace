@@ -264,3 +264,7 @@ a:not([class]) { color: var(--accent-text); }
 @media (max-width: 719px) { .sortmenu-label { font-size: 0; } .sortmenu-label::after { content: "Sort"; font-size: 15px; } }
 .pill-featured { top: auto; left: auto; bottom: 12px; right: 12px; background: #7a5b00; color: #fff; }
 .card.featured { box-shadow: 0 0 0 2px #7a5b00, var(--shadow, 0 1px 3px rgba(0,0,0,.12)); }
+/* Portrait photos are shown whole instead of cropped. */
+.hero.tall { background: var(--fill); }
+.hero.tall > img { object-fit: contain; }
+.prose a, .credits a { text-decoration: underline; text-underline-offset: 2px; }
