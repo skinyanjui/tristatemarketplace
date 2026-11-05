@@ -8,6 +8,7 @@ import { AuthGate } from "./AuthGate";
 import { ReportsReview } from "./ReportsReview";
 import { VerifyPanel } from "./VerifyPanel";
 import { VerificationReview } from "./VerificationReview";
+import { AdReview } from "./AdReview";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { categoryOf } from "@/lib/categories";
 
@@ -127,6 +128,7 @@ export function AccountPanel() {
           <Inbox uid={s.user.id} />
           <VerifyPanel uid={s.user.id} />
           <VerificationReview uid={s.user.id} />
+          <AdReview uid={s.user.id} />
           <ReportsReview uid={s.user.id} />
         </section>
       )}

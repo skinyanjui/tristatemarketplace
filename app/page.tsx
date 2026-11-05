@@ -7,11 +7,12 @@ import { Filters } from "@/components/Filters";
 import { ListingCard } from "@/components/ListingCard";
 import { AdCard, type Ad } from "@/components/AdCard";
 
-// Test ad for the outside-ad slot; replace with a real ad source later.
-const TEST_AD: Ad = { id: "test-ad", advertiser: "Tristate Market", headline: "Put your business in front of local buyers", detail: "Reach shoppers in your town", cta: "Learn more", href: "/advertise", image: "/ads/advertise.svg" };
+// Shown only when no paid ad is running, so the slot always promotes something honest.
+const HOUSE_AD: Ad = { id: "house-ad", advertiser: "Tristate Market", headline: "Put your business in front of local buyers", detail: "Reach shoppers in your town", cta: "Learn more", href: "/advertise", image: "/ads/advertise.svg" };
 import { CATEGORY_BY_ID } from "@/lib/categories";
 import { DEFAULT_TOWN, TOWN_BY_ID, nearestTown } from "@/lib/places";
 import { getListings, getTownCounts, type Sort } from "@/lib/listings";
+import { getLiveAds, pickAd } from "@/lib/ads";
 
 export default async function Home({ searchParams }: PageProps<"/">) {
   const sp = await searchParams;
@@ -39,10 +40,12 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const wanted = sp.wanted === "1";
   const verified = sp.verified === "1";
   const town = typeof sp.town === "string" ? sp.town.slice(0, 80) : "";
-  const [{ items: listings, total, page, pages }, towns] = await Promise.all([
+  const [{ items: listings, total, page, pages }, towns, liveAds] = await Promise.all([
     getListings({ q, cat, min: num("min"), max: num("max"), sort, page: pageNum, near, within, wanted, verified, town: town || undefined }),
     getTownCounts({ cat, wanted }),
+    getLiveAds(),
   ]);
+  const ad = pickAd(liveAds) ?? HOUSE_AD;
   const townHref = (t: string) => { const u = new URLSearchParams(); for (const [k, v] of Object.entries(sp)) if (typeof v === "string" && k !== "page" && k !== "town") u.set(k, v); if (t) u.set("town", t); const qs = u.toString(); return qs ? `/?${qs}` : "/"; };
   const hrefFor = (n: number) => { const u = new URLSearchParams(); for (const [k, v] of Object.entries(sp)) if (typeof v === "string" && k !== "page") u.set(k, v); if (n > 1) u.set("page", String(n)); const qs = u.toString(); return qs ? `/?${qs}` : "/"; };
   if (page > 1 && listings.length === 0) redirect(hrefFor(Math.max(1, pages)));
@@ -76,7 +79,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           {listings.map((l, i) => (
             <Fragment key={l.id}>
               <ListingCard listing={l} />
-              {page === 1 && i === 5 && <AdCard ad={TEST_AD} />}
+              {page === 1 && i === 5 && <AdCard ad={ad} />}
             </Fragment>
           ))}
         </div>

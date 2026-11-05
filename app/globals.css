@@ -635,3 +635,37 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
 .switch[aria-checked="true"] i { transform: translateX(20px); }
 .switch:focus-visible { outline: 2px solid var(--accent-fill); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .switch, .switch i { transition: none; } }
+
+/* Advertise page */
+.adv { max-width: 860px; gap: 40px; }
+.adv h2 { margin: 0 0 12px; font-size: var(--fs-h2); font-weight: 700; letter-spacing: -0.015em; }
+.adv-hero { display: grid; gap: 12px; justify-items: start; }
+.adv-hero .lead { margin: 0; font-size: 17px; line-height: 26px; color: var(--label2); max-width: 60ch; }
+.adv-products { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-bottom: 12px; }
+.adv-card { background: var(--surface); border-radius: 16px; padding: 16px; box-shadow: 0 0 0 1px var(--ring-soft); display: grid; gap: 8px; align-content: start; }
+.adv-card h3 { margin: 0; font-size: var(--fs-h3); font-weight: 600; }
+.adv-card p { margin: 0; font-size: var(--fs-ui); line-height: 20px; color: var(--label2); }
+.adv-price strong { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+.adv-card dl { margin: 4px 0 0; display: grid; gap: 8px; }
+.adv-card dt { font-size: var(--fs-cap); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--label2); }
+.adv-card dd { margin: 2px 0 0; font-size: var(--fs-sm); line-height: 18px; }
+.adv-cap { font-weight: 600; color: var(--info) !important; }
+.adv-steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 12px; }
+.adv-steps li { counter-increment: s; display: grid; grid-template-columns: 32px 1fr; column-gap: 12px; row-gap: 2px; }
+.adv-steps li::before { content: counter(s); grid-row: span 2; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--info-bg); color: var(--info); font-weight: 700; font-size: var(--fs-ui); }
+.adv-steps span { color: var(--label2); font-size: var(--fs-ui); line-height: 20px; }
+.adv-list { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: var(--fs-ui); line-height: 22px; }
+.form-card { display: grid; gap: 20px; background: var(--surface); border-radius: 16px; padding: 16px; box-shadow: 0 0 0 1px var(--ring-soft); }
+.adfs { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 8px; }
+.adfs legend { padding: 0; margin-bottom: 8px; }
+.adbuild { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 720px) { .adbuild { grid-template-columns: 1fr 200px; } }
+.adfields { display: grid; gap: 12px; }
+.adpreview { display: grid; gap: 6px; align-content: start; }
+.adpreview-card { width: 200px; max-width: 100%; height: 270px; pointer-events: none; display: grid; }
+.summary { display: flex; align-items: baseline; gap: 8px; font-size: var(--fs-ui); }
+.summary strong { font-size: 22px; font-weight: 700; }
+.myreq { margin-top: 20px; display: grid; gap: 8px; }
+.reqlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.reqlist li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px; border-radius: 12px; background: var(--surface); box-shadow: 0 0 0 1px var(--ring-soft); }
+.reqmain { flex: 1 1 220px; min-width: 0; font-size: var(--fs-ui); }
