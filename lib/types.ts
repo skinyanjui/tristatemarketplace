@@ -15,4 +15,6 @@ export type Listing = {
   photos?: string[];
   /** Set when a real member posted it; sample listings have no seller to message. */
   sellerId?: string | null;
+  /** Marked sold by the seller. Still shown, but dimmed, and not contactable. */
+  sold?: boolean;
 };

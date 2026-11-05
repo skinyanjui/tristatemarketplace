@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContactSeller } from "@/components/ContactSeller";
 import { Icon } from "@/components/Icon";
+import { ShareButton } from "@/components/ShareButton";
 import { ReportListing } from "@/components/ReportListing";
 import { Gallery } from "@/components/Gallery";
 import { artFor } from "@/components/ListingArt";
@@ -32,14 +33,18 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
             <SaveButton id={l.id} title={l.title} />
           </Gallery>
           <div className="section">
-            <span className="pill" style={{ position: "static", background: cat.color, color: "#fff" }}>{cat.label}</span>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", width: "100%" }}>
+              <span className="pill" style={{ position: "static", background: cat.color, color: "#fff" }}>{cat.label}</span>
+              {l.sold && <span className="pill" style={{ position: "static", background: "var(--label)", color: "var(--surface)" }}>Sold</span>}
+              <span style={{ marginLeft: "auto" }}><ShareButton title={l.title} /></span>
+            </div>
             <h1 className="dtitle">{l.title}</h1>
             <div className="muted" style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <Icon name="pin" size={14} />{l.place} · {l.posted}
             </div>
             <div className="mprice">
               <span className="dprice">{l.price}</span>
-              <a href="#contact" className="btn">{cat.action.label}</a>
+              {!l.sold && <a href="#contact" className="btn">{cat.action.label}</a>}
             </div>
           </div>
           <section className="section">
@@ -58,7 +63,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
         </div>
         <aside className="panel" id="contact">
           <div className="dprice">{l.price}</div>
-          <ContactSeller listingId={l.id} sellerId={l.sellerId ?? null} label={cat.action.label} />
+          <ContactSeller listingId={l.id} sellerId={l.sellerId ?? null} label={cat.action.label} sold={l.sold} />
           <div className="seller">
             <span className="avatar" aria-hidden="true">{initials}</span>
             <div>

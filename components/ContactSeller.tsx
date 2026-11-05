@@ -4,11 +4,12 @@ import { useState } from "react";
 import { AuthGate } from "./AuthGate";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
-export function ContactSeller({ listingId, sellerId, label }: { listingId: string; sellerId: string | null; label: string }) {
+export function ContactSeller({ listingId, sellerId, label, sold }: { listingId: string; sellerId: string | null; label: string; sold?: boolean }) {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
   const [err, setErr] = useState("");
 
+  if (sold) return <div className="notice">This item has been sold.</div>;
   if (!sellerId) return <div className="notice">This is a sample listing, so there is no seller to contact.</div>;
   if (!open) return <button className="btn btn-lg" onClick={() => setOpen(true)}>{label}</button>;
   if (state === "sent") return <div className="notice" role="status">Sent. The seller will see your message in their account and can reply to your email.</div>;

@@ -9,11 +9,11 @@ export function ListingCard({ listing }: { listing: Listing }) {
   const cat = categoryOf(listing.kind);
   const href = `/listing/${listing.id}`;
   return (
-    <article className="card">
+    <article className={`card${listing.sold ? " sold" : ""}`}>
       <div className="card-photo">
         <ListingImage listing={listing} />
         <Link href={href} className="card-link" aria-label={listing.title} />
-        {listing.condition && <span className="pill pill-condition">{listing.condition.replace(/^Used - /, "")}</span>}
+        {listing.sold ? <span className="pill pill-sold">Sold</span> : listing.condition && <span className="pill pill-condition">{listing.condition.replace(/^Used - /, "")}</span>}
         <SaveButton id={listing.id} title={listing.title} />
         <span className="pill pill-kind" style={{ background: cat.color }}>{cat.label}</span>
       </div>

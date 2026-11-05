@@ -91,7 +91,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .chip[aria-pressed="true"] { background: var(--accent-fill); color: #fff; box-shadow: 0 0 0 1px var(--accent-fill); }
 
 /* ---------- Page + grid ---------- */
-.wrap { width: 100%; padding: 24px 24px 64px; display: flex; flex-direction: column; gap: 16px; }
+.wrap { width: 100%; padding: 16px 24px 64px; display: flex; flex-direction: column; gap: 16px; }
 .count { font-size: 13px; color: var(--label2); }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; align-items: start; }
 .empty { padding: 64px 16px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; color: var(--label2); }
@@ -233,3 +233,9 @@ textarea.input { height: auto; padding: 12px; line-height: 24px; resize: vertica
 @media (max-width: 719px) { .form { padding: 16px 16px 96px; } }
 
 a:not([class]) { color: var(--accent-text); }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+.pager { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
+.pager .btn { min-width: 96px; }
+.card.sold .card-photo img { opacity: 0.45; filter: grayscale(1); }
+.pill-sold { top: 12px; left: 12px; height: 24px; background: var(--label); color: var(--surface); }
+@media (max-width: 719px) { .wrap { padding: 12px 16px 40px; } }

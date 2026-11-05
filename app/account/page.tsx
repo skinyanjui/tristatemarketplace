@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { SavedList } from "@/components/SavedList";
 import { AccountPanel } from "@/components/AccountPanel";
-import { getListings } from "@/lib/listings";
+import { getAllListings } from "@/lib/listings";
 
 export const metadata: Metadata = { title: "Account" };
 
 export default async function Account() {
-  const all = await getListings();
+  const all = await getAllListings();
   return (
     <main className="form" style={{ maxWidth: 1120 }}>
       <h1>Account</h1>

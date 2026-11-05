@@ -27,7 +27,7 @@ export function Filters() {
   if (max) tokens.push({ label: `Up to $${Number(max).toLocaleString()}`, clear: { max: "" } });
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
+    <>
       <div className="filters" style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
         <button type="button" className="chip" aria-pressed={open} aria-expanded={open} onClick={() => setOpen((o) => !o)}>Price</button>
         <label className="sr-only" htmlFor="sort">Sort by</label>
@@ -42,7 +42,7 @@ export function Filters() {
       </div>
       {open && (
         <form
-          style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "end" }}
+          style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "end", flexBasis: "100%" }}
           onSubmit={(e) => {
             e.preventDefault();
             const fd = new FormData(e.currentTarget);
@@ -61,6 +61,6 @@ export function Filters() {
           <button className="btn">Apply</button>
         </form>
       )}
-    </div>
+    </>
   );
 }
