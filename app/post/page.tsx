@@ -59,7 +59,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
           if (err) throw err;
           router.push(`/listing/${data.id}`);
         } catch (err) {
-          setError(err instanceof Error ? err.message : "Oops, something went wrong. Please try again.");
+          setError((err as { message?: string } | null)?.message || "Oops, something went wrong. Please try again.");
           setBusy(false);
         }
       }}
@@ -79,7 +79,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
       <section className="field">
         <span className="lbl" style={{ fontSize: 17, fontWeight: 600 }}>Photos</span>
         <label className="notice" style={{ cursor: "pointer", textAlign: "center", padding: 28 }}>
-          <input ref={files} type="file" accept="image/*" multiple className="sr-only" onChange={(e) => setPicked(e.target.files?.length ?? 0)} />
+          <input ref={files} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple className="sr-only" onChange={(e) => setPicked(e.target.files?.length ?? 0)} />
           {picked ? `${picked} photo${picked > 1 ? "s" : ""} selected. The first one is shown on your card.` : "Add photos (up to 8). The first one is shown on your card."}
         </label>
       </section>

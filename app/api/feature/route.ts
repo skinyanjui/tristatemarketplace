@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     return Response.json({ mode: "demo", until: data });
   }
 
-  const origin = req.headers.get("origin") ?? new URL(req.url).origin;
+  const origin = new URL(req.url).origin;
   const body = new URLSearchParams({
     mode: "payment",
     success_url: `${origin}/account?featured=ok`,

@@ -14,12 +14,17 @@ export async function POST(req: Request) {
   const ok = given.length === 32 && timingSafeEqual(given, Buffer.from(expected, "hex")) && Math.abs(Date.now() / 1000 - Number(parts.t)) < 300;
   if (!ok) return new Response("Bad signature", { status: 400 });
 
-  const event = JSON.parse(body) as { type: string; data: { object: { payment_status?: string; metadata?: { listing_id?: string; days?: string } } } };
+  const event = JSON.parse(body) as { type: string; data: { object: { id: string; payment_status?: string; metadata?: { listing_id?: string; days?: string } } } };
   const s = event.data.object;
   if (event.type === "checkout.session.completed" && s.payment_status === "paid" && s.metadata?.listing_id) {
     const id = s.metadata.listing_id;
     const days = Number(s.metadata.days ?? 7);
     const h = { apikey: service, Authorization: `Bearer ${service}`, "Content-Type": "application/json" };
+    // Stripe retries webhooks: record the session first and stop if we already handled it.
+    const seen = await fetch(`${SUPABASE_URL}/rest/v1/tm_payments`, {
+      method: "POST", headers: { ...h, Prefer: "resolution=ignore-duplicates,return=representation" }, body: JSON.stringify({ session_id: s.id, listing_id: id }),
+    });
+    if (seen.ok && ((await seen.json()) as unknown[]).length === 0) return new Response("already handled");
     const cur = (await (await fetch(`${SUPABASE_URL}/rest/v1/tm_listings?id=eq.${encodeURIComponent(id)}&select=featured_until`, { headers: h })).json()) as { featured_until: string | null }[];
     const start = Math.max(Date.now(), cur[0]?.featured_until ? new Date(cur[0].featured_until).getTime() : 0);
     await fetch(`${SUPABASE_URL}/rest/v1/tm_listings?id=eq.${encodeURIComponent(id)}`, {

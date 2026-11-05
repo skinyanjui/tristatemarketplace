@@ -51,8 +51,9 @@ function Mine({ uid }: { uid: string }) {
             {categoryOf(r.kind).label} · {r.price || "No price"} · {r.status}
             {r.featured_until && new Date(r.featured_until) > new Date() && ` · Featured until ${new Date(r.featured_until).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
           </span>
+          {r.status === "removed" && <span className="muted">Removed by moderators</span>}
           {r.status === "active" && <button className="btn" onClick={() => feature(r.id)}>{r.featured_until && new Date(r.featured_until) > new Date() ? "Extend" : "Feature"}</button>}
-          <button className="btn" onClick={() => setStatus(r.id, r.status === "active" ? "sold" : "active")}>{r.status === "active" ? "Mark sold" : "Relist"}</button>
+          {r.status !== "removed" && <button className="btn" onClick={() => setStatus(r.id, r.status === "active" ? "sold" : "active")}>{r.status === "active" ? "Mark sold" : "Relist"}</button>}
           <button className="btn" onClick={() => remove(r.id)}>Delete</button>
         </li>
       ))}

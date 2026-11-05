@@ -44,7 +44,7 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
     if (nearErr) throw new Error(`Could not measure distance: ${nearErr.message}`);
     nearIds = (data as string[]).length ? (data as string[]) : ["-"];
   }
-  const q = (opts.q ?? "").trim().replace(/[%,()*]/g, " ");
+  const q = (opts.q ?? "").trim().replace(/[%,()*"\\]/g, " ");
   const today = new Date().toISOString().slice(0, 10);
   // Same filters for the featured strip and the main list.
   const base = (count: boolean) => {

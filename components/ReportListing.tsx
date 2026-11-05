@@ -20,7 +20,7 @@ export function ReportListing({ listingId }: { listingId: string }) {
         setState("sending"); setErr("");
         const fd = new FormData(e.currentTarget);
         const { error } = await supabaseBrowser().from("tm_reports").insert({ listing_id: listingId, reason: fd.get("reason"), details: String(fd.get("details") ?? "").slice(0, 1000) });
-        if (error) { setErr("Hmm, that did not go through. Please try again."); setState("idle"); } else setState("sent");
+        if (error) { setErr(error.message.includes("plenty") || error.message.includes("duplicate") ? "Thanks, we already have your report on this one." : "Hmm, that did not go through. Please try again."); setState("idle"); } else setState("sent");
       }}
     >
       <div className="field">
