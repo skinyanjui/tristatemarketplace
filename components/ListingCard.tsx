@@ -31,15 +31,15 @@ export function ListingCard({ listing }: { listing: Listing }) {
       <div className="card-body">
         <Link href={href} className="card-link" aria-hidden="true" tabIndex={-1} />
         <h2 className="ctitle">{listing.title}</h2>
-        <div className="place">
-          <Icon name="pin" size={13} />
-          <span>{dateInRow && listing.eventDate && <b>{niceDate(listing.eventDate)}</b>}{dateInRow && " · "}{listing.place || "Location not set"}</span>
-        </div>
         <div className="card-row">
           <span className="price">{listing.price.replace(/\s*–\s*/g, "–").replace(/\s*\/\s*/g, "/")}</span>
           <Link href={`${href}#contact`} className="act" aria-label={`${cat.action.label}: ${listing.title}`}>
             <span><Icon name={cat.action.icon} size={18} color="#fff" /></span>
           </Link>
+        </div>
+        <div className="place">
+          <Icon name="pin" size={13} />
+          <span>{dateInRow && listing.eventDate && <b>{niceDate(listing.eventDate)}</b>}{dateInRow && " · "}{listing.place || "Location not set"}</span>
         </div>
       </div>
     </article>

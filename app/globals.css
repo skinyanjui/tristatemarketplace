@@ -118,12 +118,12 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .save { position: absolute; top: 2px; right: 6px; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; display: grid; place-items: center; }
 .save span { width: 32px; height: 32px; border-radius: 9999px; background: var(--glass); box-shadow: 0 0 0 1px var(--ring-soft); display: grid; place-items: center; }
 .card-body { position: relative; height: 106px; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 0; }
-.card-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 41px; margin-top: 4px; border-top: 1px solid var(--sep); }
+.card-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 40px; margin-top: 2px; }
 .price { display: inline-flex; align-items: center; min-height: 44px; margin: -2px 0; font-size: 20px; line-height: 28px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .act { position: relative; z-index: 1; flex: none; width: 44px; height: 44px; margin: -2px -4px -2px 0; display: grid; place-items: center; }
 .act span { width: 32px; height: 32px; border-radius: 9999px; background: var(--accent-fill); display: grid; place-items: center; }
-.place { display: flex; align-items: center; gap: 4px; font-size: 12.5px; line-height: 18px; color: var(--label2); min-width: 0; margin-top: 2px; }
-.place svg { flex: none; opacity: 0.7; }
+.place { display: flex; align-items: center; gap: 4px; font-size: 12.5px; line-height: 18px; font-weight: 500; color: color-mix(in srgb, var(--label) 82%, var(--surface)); min-width: 0; }
+.place svg { flex: none; opacity: 0.85; }
 .place b { font-weight: 600; color: var(--label); }
 .place span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
