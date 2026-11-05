@@ -598,3 +598,8 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
 .card.sponsored .card-body, .card.ad .card-body { height: 140px; }
 .cfact b { font-weight: 600; color: var(--label); }
 .tagrow { display: flex; align-items: center; height: 18px; min-width: 0; }
+
+/* Sponsored / Ad: a small badge on the photo, under the heart, so the card keeps one size. */
+.pill-tiny { top: 46px; right: 10px; height: 18px; padding: 0 7px; font-size: 10px; letter-spacing: .02em; background: var(--info); color: #fff; max-width: 70px; }
+.card.sponsored .card-body, .card.ad .card-body { height: 122px; }
+.grid { align-items: start; }

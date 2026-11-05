@@ -14,17 +14,16 @@ export function AdCard({ ad }: { ad: Ad }) {
           ? <img src={ad.image} alt="" loading="lazy" />
           : <div className="ad-art" aria-hidden="true">{ad.advertiser.slice(0, 1)}</div>}
         <a href={ad.href} {...ext} className="card-link" aria-label={`${ad.headline} (ad${external ? ", opens in a new tab" : ""})`} />
-        <span className="pill pill-top pill-ad">Ad</span>
+        <span className="pill pill-tiny">Ad</span>
       </div>
       <div className="card-body">
         <h2 className="ctitle">{ad.headline}</h2>
-        <p className="cfact">{ad.detail}</p>
+        <p className="cfact"><b>{ad.advertiser}</b> · {ad.detail}</p>
         <div className="card-row">
           <a href={ad.href} {...ext} className="act" aria-label={`${ad.cta}: ${ad.headline}${external ? " (opens in a new tab)" : ""}`}>
             <span><Icon name="nav" size={16} color="#fff" />{ad.cta}</span>
           </a>
         </div>
-        <div className="tagrow"><span className="tag-sponsored">Ad · {ad.advertiser}</span></div>
       </div>
     </article>
   );

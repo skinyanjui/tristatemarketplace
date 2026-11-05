@@ -29,6 +29,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
         {top === "featured" && <span className="pill pill-top pill-featured">Featured</span>}
         {top === "date" && listing.eventDate && <span className="pill pill-top pill-date">{niceDate(listing.eventDate)}</span>}
         <SaveButton id={listing.id} title={listing.title} />
+        {listing.sponsored && <span className="pill pill-tiny">Sponsored</span>}
         <span className="pill pill-kind" style={{ background: cat.color }}>{cat.label}</span>
         {listing.verified && <span className="pill pill-verified" aria-label="Verified seller" title="Verified seller"><Icon name="check" size={12} color="#fff" /></span>}
         {listing.photoCount > 1 && <span className={`pill pill-count${listing.verified ? " up" : ""}`} aria-label={`${listing.photoCount} photos`}><Icon name="photo" size={11} />{listing.photoCount}</span>}
@@ -55,7 +56,6 @@ export function ListingCard({ listing }: { listing: Listing }) {
             </Link>
           )}
         </div>
-        {listing.sponsored && <div className="tagrow"><span className="tag-sponsored">Sponsored</span></div>}
       </div>
     </article>
   );
