@@ -52,7 +52,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const catLabel = cat !== "all" ? CATEGORY_BY_ID[cat]?.label : null;
 
   return (
-    <main className="wrap">
+    <main className="wrap home">
       <h1 className="sr-only">Tristate Market listings</h1>
       <div className="toolbar">
         <div className="count" aria-live="polite">
@@ -60,20 +60,19 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           {catLabel ? ` in ${catLabel}` : ""}
           {within ? ` within ${within} miles of ${originName}` : ""}
           {q ? ` matching "${q}"` : ""}
-          {sort === "near" && !within ? <span className="count-extra"> · closest to {originName} first</span> : null}
         </div>
+        {(towns.length > 1 || town) && (
+          <nav className="towns" aria-label="Browse by town">
+            <Link href={townHref("")} className={`chip${town ? "" : " on"}`} aria-current={town ? undefined : "true"}>All towns</Link>
+            {towns.map((t) => (
+              <Link key={t.place} href={townHref(t.place)} className={`chip${town === t.place ? " on" : ""}`} aria-current={town === t.place ? "true" : undefined}>{t.place.split(",")[0]}<small>{t.count}</small></Link>
+            ))}
+          </nav>
+        )}
         <Suspense fallback={<div style={{ height: 36 }} />}>
           <Filters origin={origin} defaultSort={defaultSort} />
         </Suspense>
       </div>
-      {(towns.length > 1 || town) && (
-        <nav className="towns" aria-label="Browse by town">
-          <Link href={townHref("")} className={`chip${town ? "" : " on"}`} aria-current={town ? undefined : "true"}>All towns</Link>
-          {towns.map((t) => (
-            <Link key={t.place} href={townHref(t.place)} className={`chip${town === t.place ? " on" : ""}`} aria-current={town === t.place ? "true" : undefined}>{t.place.split(",")[0]}<small>{t.count}</small></Link>
-          ))}
-        </nav>
-      )}
       {listings.length > 0 ? (
         <div className="grid">
           {listings.map((l, i) => (

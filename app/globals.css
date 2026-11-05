@@ -669,3 +669,20 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
 .reqlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .reqlist li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px; border-radius: 12px; background: var(--surface); box-shadow: 0 0 0 1px var(--ring-soft); }
 .reqmain { flex: 1 1 220px; min-width: 0; font-size: var(--fs-ui); }
+
+/* Compact results bar: count, towns and filters share one row on desktop; two tight rows on phones. */
+.home { gap: 10px; padding-top: 10px; }
+.toolbar { display: flex; flex-wrap: nowrap; align-items: center; justify-content: flex-start; gap: 12px; min-width: 0; }
+.toolbar > .count { flex: none; white-space: nowrap; }
+.toolbar > .towns { flex: 1 1 0; min-width: 0; padding: 0; }
+.toolbar > .filters { flex: none; flex-wrap: nowrap !important; }
+.toolbar .towns .chip, .toolbar .filters .chip { height: 34px; }
+@media (max-width: 1100px) {
+  .toolbar { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 10px; }
+  .toolbar > .filters { grid-column: 1 / -1; order: 1; overflow-x: auto; scrollbar-width: none; padding: 1px 0; }
+  .toolbar > .filters::-webkit-scrollbar { display: none; }
+  .toolbar > .filters > * { flex: none; }
+  .toolbar > .count { order: 2; }
+  .toolbar > .towns { order: 3; }
+}
+@media (max-width: 1100px) { .toolbar > .filters > :last-child { order: -1; } }
