@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Footer } from "@/components/Footer";
-import { Nav } from "@/components/Nav";
+import { PopularNav } from "@/components/PopularNav";
 import { TabBar } from "@/components/TabBar";
 import { Toaster } from "@/components/Toaster";
 import "./globals.css";
@@ -24,7 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en">
       <body>
         <Suspense fallback={<div className="nav-wrap" style={{ height: 112 }} />}>
-          <Nav />
+          <PopularNav />
         </Suspense>
         {children}
         <Footer />

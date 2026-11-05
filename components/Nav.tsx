@@ -7,7 +7,7 @@ import { createPortal } from "react-dom";
 import { CATEGORY_BY_ID, FEATURED_IDS, GROUPS, categoriesInGroup } from "@/lib/categories";
 import { Icon } from "./Icon";
 
-const FEATURED = FEATURED_IDS.map((id) => CATEGORY_BY_ID[id]).filter(Boolean);
+const CHIP_COUNT = FEATURED_IDS.length;
 
 function MoreCategories({ cat, onPick }: { cat: string; onPick: (id: string) => void }) {
   const [open, setOpen] = useState(false);
@@ -83,7 +83,7 @@ function MoreCategories({ cat, onPick }: { cat: string; onPick: (id: string) => 
   );
 }
 
-export function Nav() {
+export function Nav({ popular = FEATURED_IDS }: { popular?: string[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -91,7 +91,9 @@ export function Nav() {
   const cat = params.get("cat") ?? "all";
   const onHome = pathname === "/";
   const wanted = params.get("wanted") === "1";
-  const extra = cat !== "all" && !FEATURED_IDS.includes(cat) ? CATEGORY_BY_ID[cat] : undefined;
+  const topIds = popular.slice(0, CHIP_COUNT);
+  const FEATURED = topIds.map((id) => CATEGORY_BY_ID[id]).filter(Boolean);
+  const extra = cat !== "all" && !topIds.includes(cat) ? CATEGORY_BY_ID[cat] : undefined;
 
   const chipsEl = useRef<HTMLDivElement>(null);
   useEffect(() => {
