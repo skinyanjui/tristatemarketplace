@@ -29,7 +29,7 @@ export function fromRow(r: Row): Listing {
   };
 }
 
-export type Sort = "new" | "old" | "soon" | "low" | "high" | "az" | "za";
+export type Sort = "new" | "old" | "best" | "soon" | "low" | "high" | "az" | "za";
 export const PAGE_SIZE = 48;
 
 export type Opts = { q?: string; cat?: string; min?: number; max?: number; sort?: Sort; page?: number; near?: string; within?: number };
@@ -46,14 +46,23 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
     if (nearErr) throw new Error(`Could not measure distance: ${nearErr.message}`);
     nearIds = (data as string[]).length ? (data as string[]) : ["-"];
   }
-  const q = (opts.q ?? "").trim().replace(/[%,()*"\\]/g, " ");
+  const q = (opts.q ?? "").trim().slice(0, 100);
+  // Ranked full-text search (stems, synonyms, prefixes, typo tolerance) runs in the database.
+  let rank: Map<string, number> | null = null;
+  if (q) {
+    const { data, error: sErr } = await sb.rpc("tm_search", { q });
+    if (sErr) throw new Error(`Could not search: ${sErr.message}`);
+    const hits = (data ?? []) as { id: string; score: number }[];
+    if (!hits.length) return { items: [], total: 0, page, pages: 1 };
+    rank = new Map(hits.map((h, i) => [h.id, i]));
+  }
   const today = localToday();
   // Same filters for the featured strip and the main list.
   const base = (count: boolean) => {
     let query = sb.from("tm_listings").select(COLUMNS, count ? { count: "exact" } : undefined).in("status", ["active", "sold"]);
     if (nearIds) query = query.in("id", nearIds);
     if (opts.cat && opts.cat !== "all") query = query.eq("kind", opts.cat);
-    if (q) query = query.or(`title.ilike.%${q}%,place.ilike.%${q}%,kind.ilike.%${q}%,description.ilike.%${q}%`);
+    if (rank) query = query.in("id", [...rank.keys()]);
     // Events and sales drop off the site once their date has passed.
     query = query.or(`event_date.is.null,event_date.gte.${today}`);
     if (opts.min !== undefined) query = query.gte("price_value", opts.min);
@@ -73,12 +82,18 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
   if (opts.sort === "low" || opts.sort === "high") query = query.order("price_value", { ascending: opts.sort === "low", nullsFirst: false });
   if (opts.sort === "soon") query = query.order("event_date", { ascending: true, nullsFirst: false });
   if (opts.sort === "az" || opts.sort === "za") query = query.order("title", { ascending: opts.sort === "az" });
-  query = query.order("created_at", { ascending: opts.sort === "old" }).range(from, from + PAGE_SIZE - 1);
+  const byRank = !!rank && opts.sort === "best";
+  query = query.order("created_at", { ascending: opts.sort === "old" });
+  if (!byRank) query = query.range(from, from + PAGE_SIZE - 1);
   const { data, error, count } = await query;
   if (error) throw new Error(`Could not load listings: ${error.message}`);
   const total = (count ?? 0) + featured.length;
-  const items = (data as unknown as Row[]).map(fromRow);
-  return { items: page === 1 ? [...featured, ...items] : items, total, page, pages: Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE)) };
+  let items = (data as unknown as Row[]).map(fromRow);
+  if (byRank && rank) {
+    // Best match first; sold listings sink below active ones with the same relevance bucket.
+    items = items.sort((a, b) => Number(!!a.sold) - Number(!!b.sold) || (rank.get(a.id) ?? 0) - (rank.get(b.id) ?? 0)).slice(from, from + PAGE_SIZE);
+  }
+  return { items: page === 1 ? [...featured, ...items] : items, total, page, pages: Math.max(1, Math.ceil((byRank ? (count ?? 0) : (count ?? 0)) / PAGE_SIZE)) };
 }
 
 export async function getAllListings(): Promise<Listing[]> {

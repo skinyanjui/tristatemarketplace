@@ -12,7 +12,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const q = typeof sp.q === "string" ? sp.q : "";
   const cat = typeof sp.cat === "string" ? sp.cat : "all";
   const num = (k: string) => { const v = sp[k]; const n = typeof v === "string" && v !== "" ? Number(v) : NaN; return Number.isFinite(n) && n >= 0 ? n : undefined; };
-  const sort: Sort = (["old", "soon", "low", "high", "az", "za"] as const).find((x) => x === sp.sort) ?? (cat === "event" || cat === "sale" ? "soon" : "new");
+  const sort: Sort = (["best", "old", "soon", "low", "high", "az", "za"] as const).find((x) => x === sp.sort) ?? (q ? "best" : cat === "event" || cat === "sale" ? "soon" : "new");
   const near = typeof sp.near === "string" && TOWN_BY_ID[sp.near] ? sp.near : undefined;
   const within = num("within");
   const pageNum = typeof sp.page === "string" ? Number(sp.page) || 1 : 1;
@@ -43,8 +43,8 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         </div>
       ) : (
         <div className="empty">
-          <strong>Nothing here yet</strong>
-          <span>Try a different word, category or price range. New things get posted every day!</span>
+          <strong>{q ? `No matches for “${q}”` : "Nothing here yet"}</strong>
+          <span>{q ? "Check the spelling, try a simpler word, or clear a filter. New things get posted every day!" : "Try a different category or price range. New things get posted every day!"}</span>
         </div>
       )}
       {pages > 1 && (

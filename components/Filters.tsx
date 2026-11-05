@@ -40,7 +40,8 @@ export function Filters() {
     return () => document.removeEventListener("mousedown", away);
   }, [distOpen]);
   const cat = params.get("cat");
-  const fallback = cat === "event" || cat === "sale" ? "soon" : "new";
+  const q = params.get("q");
+  const fallback = q ? "best" : cat === "event" || cat === "sale" ? "soon" : "new";
   const sort = params.get("sort") ?? fallback;
 
   function set(next: Record<string, string>) {
@@ -117,7 +118,7 @@ export function Filters() {
             </form>
           )}
         </div>
-        <SortMenu label="Sort by" options={SORTS} value={sort} onChange={(v) => set({ sort: v })} />
+        <SortMenu label="Sort by" options={q ? [{ value: "best", label: "Best match" }, ...SORTS] : SORTS} value={sort} onChange={(v) => set({ sort: v })} />
         {tokens.map((t) => (
           <button key={t.label} type="button" className="chip" onClick={() => set(t.clear)} aria-label={`Clear: ${t.label}`}>{t.label} ✕</button>
         ))}
