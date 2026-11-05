@@ -24,7 +24,7 @@ export function AdCard({ ad }: { ad: Ad }) {
             <span><Icon name="nav" size={16} color="#fff" />{ad.cta}</span>
           </a>
         </div>
-        <div className="place"><span><b>{ad.advertiser}</b> · Ad</span></div>
+        <div className="tagrow"><span className="tag-sponsored">Ad · {ad.advertiser}</span></div>
       </div>
     </article>
   );

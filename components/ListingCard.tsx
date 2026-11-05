@@ -36,7 +36,11 @@ export function ListingCard({ listing }: { listing: Listing }) {
       <div className="card-body">
         <Link href={href} className="card-link" aria-hidden="true" tabIndex={-1} />
         <h2 className="ctitle">{listing.title}</h2>
-        <p className="cfact">{keyFact(listing)}</p>
+        <p className="cfact">
+          {dateInRow && listing.eventDate && <b>{niceDate(listing.eventDate)} · </b>}
+          {[keyFact(listing), listing.place ? listing.place.split(",")[0] : "Location not set"].filter(Boolean).join(" · ")}
+          {milesLabel(listing.miles) && ` · ${milesLabel(listing.miles)}`}
+        </p>
         <div className="card-row">
           <span className="price">{listing.price.replace(/\s*–\s*/g, "–").replace(/\s*\/\s*/g, "/")}</span>
           {listing.sold ? (
@@ -51,11 +55,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
             </Link>
           )}
         </div>
-        <div className="place">
-          {listing.sponsored && <span className="tag-sponsored">Sponsored</span>}
-          <Icon name="pin" size={13} />
-          <span>{dateInRow && listing.eventDate && <b>{niceDate(listing.eventDate)}</b>}{dateInRow && " · "}{listing.place || "Location not set"}{milesLabel(listing.miles) && <span className="miles"> · {milesLabel(listing.miles)}</span>}</span>
-        </div>
+        {listing.sponsored && <div className="tagrow"><span className="tag-sponsored">Sponsored</span></div>}
       </div>
     </article>
   );
