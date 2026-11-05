@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
+import { Footer } from "@/components/Footer";
 import { Nav } from "@/components/Nav";
 import { TabBar } from "@/components/TabBar";
 import "./globals.css";
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Nav />
         </Suspense>
         {children}
+        <Footer />
         <Suspense fallback={<div className="tabbar" style={{ height: 49 }} />}>
           <TabBar />
         </Suspense>

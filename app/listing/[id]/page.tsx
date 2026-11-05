@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContactSeller } from "@/components/ContactSeller";
 import { Icon } from "@/components/Icon";
+import { ReportListing } from "@/components/ReportListing";
 import { Gallery } from "@/components/Gallery";
 import { artFor } from "@/components/ListingArt";
 import { SaveButton } from "@/components/SaveButton";
@@ -61,7 +62,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
               <div className="muted">{l.seller.meta}</div>
             </div>
           </div>
-          <div className="muted" style={{ fontSize: 12 }}>Listing {l.id}</div>
+          <ReportListing listingId={l.id} />
         </aside>
       </div>
     </main>
