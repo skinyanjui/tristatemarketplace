@@ -15,7 +15,7 @@ function Mine({ uid }: { uid: string }) {
   const [rows, setRows] = useState<Mine[] | null>(null);
   const [err, setErr] = useState("");
   const load = () =>
-    supabaseBrowser().from("tm_listings").select("id,title,kind,price,status,featured_until,expires_at,photos").eq("seller_id", uid).order("created_at", { ascending: false })
+    supabaseBrowser().from("tm_listings").select("id,title,kind,price,status,featured_until,expires_at,photos").eq("seller_id", uid).eq("is_demo", false).order("created_at", { ascending: false })
       .then(({ data, error }) => (error ? setErr(error.message) : setRows(data as Mine[])));
   useEffect(() => { load(); }, [uid]); // eslint-disable-line react-hooks/exhaustive-deps
 
