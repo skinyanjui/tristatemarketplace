@@ -14,8 +14,9 @@ export function niceDate(iso: string) {
 export function ListingCard({ listing }: { listing: Listing }) {
   const cat = categoryOf(listing.kind);
   const href = `/listing/${listing.id}`;
-  // One status pill on the photo, by importance: Sold, Featured, then the date of an event or sale.
-  const top = listing.sold ? "sold" : listing.sponsored ? "sponsored" : listing.featured ? "featured" : listing.eventDate ? "date" : null;
+  // One status pill on the photo, by usefulness to the buyer: Sold, then the date of an event or sale, then Featured.
+  // "Sponsored" is a disclosure, not a status, so it never takes that slot; it sits in the footer row instead.
+  const top = listing.sold ? "sold" : listing.eventDate ? "date" : listing.featured ? "featured" : null;
   const dateInRow = !!listing.eventDate && top !== "date";
   return (
     <article className={`card${listing.sold ? " sold" : ""}${listing.featured ? " featured" : ""}${listing.sponsored ? " sponsored" : ""}`}>
@@ -23,7 +24,6 @@ export function ListingCard({ listing }: { listing: Listing }) {
         <ListingImage listing={listing} />
         <Link href={href} className="card-link" aria-label={listing.title} />
         {top === "sold" && <span className="pill pill-top pill-sold">Sold</span>}
-        {top === "sponsored" && <span className="pill pill-top pill-sponsored">Sponsored</span>}
         {top === "featured" && <span className="pill pill-top pill-featured">Featured</span>}
         {top === "date" && listing.eventDate && <span className="pill pill-top pill-date">{niceDate(listing.eventDate)}</span>}
         <SaveButton id={listing.id} title={listing.title} />
@@ -49,6 +49,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
           )}
         </div>
         <div className="place">
+          {listing.sponsored && <span className="tag-sponsored">Sponsored</span>}
           <Icon name="pin" size={13} />
           <span>{dateInRow && listing.eventDate && <b>{niceDate(listing.eventDate)}</b>}{dateInRow && " · "}{listing.place || "Location not set"}{milesLabel(listing.miles) && <span className="miles"> · {milesLabel(listing.miles)}</span>}</span>
         </div>

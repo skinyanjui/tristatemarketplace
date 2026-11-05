@@ -5,7 +5,7 @@ create index if not exists tm_listings_sponsored_idx on public.tm_listings (spon
 -- Members can never set or change their own sponsorship.
 create or replace function public.tm_guard_listing() returns trigger language plpgsql set search_path = public as $$
 begin
-  if current_user in ('postgres', 'supabase_admin', 'service_role') or public.tm_is_admin() then return new; end if;
+  if session_user in ('postgres', 'supabase_admin', 'service_role') or public.tm_is_admin() then return new; end if;
   if tg_op = 'INSERT' then
     new.featured_until := null; new.sponsored_until := null; new.created_at := now(); new.seller_meta := 'Private seller'; new.status := 'active';
     new.expires_at := now() + interval '60 days';
@@ -46,7 +46,7 @@ create policy "tm profiles are public" on public.tm_profiles for select using (t
 create or replace function public.tm_set_verified(uid uuid, is_verified boolean, name text default null) returns void
 language plpgsql security definer set search_path = public as $$
 begin
-  if not (public.tm_is_admin() or current_user in ('postgres', 'supabase_admin', 'service_role')) then raise exception 'Admins only.'; end if;
+  if not (public.tm_is_admin() or session_user in ('postgres', 'supabase_admin', 'service_role')) then raise exception 'Admins only.'; end if;
   insert into public.tm_profiles (user_id, display_name, verified, verified_at)
   values (uid, coalesce(name, (select split_part(email, '@', 1) from auth.users where id = uid)), is_verified, case when is_verified then now() end)
   on conflict (user_id) do update set verified = is_verified, verified_at = case when is_verified then now() end, display_name = coalesce(name, tm_profiles.display_name);

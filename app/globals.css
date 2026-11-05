@@ -563,3 +563,6 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
 .profile-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; margin-top: 6px; }
 .profile-note { margin: 6px 0 0; }
 @media (max-width: 719px) { .profile-text h1 { font-size: 24px; } .avatar-lg { width: 56px; height: 56px; font-size: 20px; } }
+
+/* Sponsored is a disclosure label in the footer row; it never replaces the date or other status pill. */
+.tag-sponsored { order: 2; margin-left: auto; flex: none; font-size: var(--fs-cap); font-weight: 600; line-height: 1; padding: 3px 7px; border-radius: 999px; color: var(--label2, #6b6b73); box-shadow: inset 0 0 0 1px var(--sep, rgba(0,0,0,.18)); }

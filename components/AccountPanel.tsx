@@ -6,6 +6,8 @@ import { Notice } from "./Notice";
 import { toast } from "./Toaster";
 import { AuthGate } from "./AuthGate";
 import { ReportsReview } from "./ReportsReview";
+import { VerifyPanel } from "./VerifyPanel";
+import { VerificationReview } from "./VerificationReview";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { categoryOf } from "@/lib/categories";
 
@@ -123,6 +125,8 @@ export function AccountPanel() {
           <h2 className="h3">Messages</h2>
           <p className="muted" style={{ margin: "-8px 0 0" }}>Buyers write to you here. Reply by email, and meet in a public place.</p>
           <Inbox uid={s.user.id} />
+          <VerifyPanel uid={s.user.id} />
+          <VerificationReview uid={s.user.id} />
           <ReportsReview uid={s.user.id} />
         </section>
       )}
