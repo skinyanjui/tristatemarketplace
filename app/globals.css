@@ -727,3 +727,16 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
 @media (min-width: 1101px) {
   .toolbar > .filters::before { content: ""; flex: none; width: 4px; height: 4px; border-radius: 50%; background: color-mix(in srgb, var(--label) 35%, var(--surface)); margin-right: 4px; }
 }
+
+/* Slimmer rows between the top bar and the listings: every chip is 30px; tap targets stay 44px via ::after. */
+.chiprow { padding-bottom: 4px; }
+.chips { padding: 4px 2px; margin: -3px -2px; }
+.toolbar .towns .chip, .toolbar .filters .chip, .toolbar .filters .sortmenu .chip { height: 30px; }
+.toolbar .vswitch { min-height: 30px; }
+.toolbar .switch { width: 42px; height: 26px; }
+.toolbar .switch i { width: 22px; height: 22px; }
+.toolbar .switch[aria-checked="true"] i { transform: translateX(16px); }
+.toolbar { gap: 4px 12px; }
+@media (max-width: 1100px) { .toolbar { gap: 4px 10px; } }
+.home { padding-top: 6px; gap: 8px; }
+@media (max-width: 1100px) { .toolbar { gap: 7px 10px; } }
