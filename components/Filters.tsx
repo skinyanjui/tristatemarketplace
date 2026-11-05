@@ -44,6 +44,15 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
   const rawSort = params.get("sort");
   const sort = rawSort ?? fallback;
 
+  const byValue = Object.fromEntries(SORTS.map((o) => [o.value, o]));
+  const primarySorts = [...(q ? ["best"] : []), ...(fallback === "soon" ? ["soon"] : []), "near", "new", "low", "high"];
+  const sortOptions = [
+    ...(q ? [{ value: "best", label: "Best match" }] : []),
+    ...(fallback === "soon" ? [byValue.soon] : []),
+    { value: "near", label: "Closest first" }, byValue.new, byValue.low, byValue.high,
+    ...(fallback === "soon" ? [] : [byValue.soon]), byValue.old, byValue.az, byValue.za,
+  ];
+
   function set(next: Record<string, string>) {
     const sp = new URLSearchParams(params.toString());
     for (const [k, v] of Object.entries(next)) {
@@ -122,7 +131,7 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
             </form>
           )}
         </div>
-        <SortMenu label="Sort by" options={[...(q ? [{ value: "best", label: "Best match" }] : []), { value: "near", label: "Closest first" }, ...SORTS]} value={sort} onChange={(v) => set({ sort: v })} />
+        <SortMenu label="Sort by" options={sortOptions} primary={primarySorts} value={sort} onChange={(v) => set({ sort: v })} />
         {tokens.map((t) => (
           <button key={t.label} type="button" className="chip" onClick={() => set(t.clear)} aria-label={`Clear: ${t.label}`}>{t.label} ✕</button>
         ))}
