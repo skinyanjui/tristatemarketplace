@@ -107,11 +107,14 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .card-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .card-link { position: absolute; inset: 0; }
 .pill {
-  position: absolute; display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 9999px;
-  font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; max-width: calc(100% - 24px);
+  position: absolute; display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 9999px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; max-width: calc(100% - 24px);
 }
 .pill-condition { top: 12px; left: 12px; height: 24px; font-size: 12px; background: var(--surface); box-shadow: 0 0 0 1px var(--ring-soft); max-width: calc(100% - 64px); }
-.pill-kind { bottom: 12px; left: 12px; color: #fff; }
+.pill-kind { bottom: 10px; left: 10px; color: #fff; }
+.pill-top { top: 10px; left: 10px; max-width: calc(100% - 60px); }
+.pill-date { background: var(--surface); color: var(--label); box-shadow: 0 0 0 1px var(--ring-soft); }
+.pill-count { bottom: 10px; right: 10px; background: rgba(0, 0, 0, 0.6); color: #fff; padding: 0 8px; }
 .save { position: absolute; top: 2px; right: 6px; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; display: grid; place-items: center; }
 .save span { width: 32px; height: 32px; border-radius: 9999px; background: var(--glass); box-shadow: 0 0 0 1px var(--ring-soft); display: grid; place-items: center; }
 .card-body { position: relative; padding: 10px 12px; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
@@ -236,7 +239,7 @@ a:not([class]) { color: var(--accent-text); }
 .pager { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
 .pager .btn { min-width: 96px; }
 .card.sold .card-photo img { opacity: 0.45; filter: grayscale(1); }
-.pill-sold { top: 12px; left: 12px; height: 24px; background: var(--label); color: var(--surface); }
+.pill-sold { background: var(--label); color: var(--surface); }
 @media (max-width: 719px) { .wrap { padding: 12px 16px 40px; } }
 
 /* Sort menu */
@@ -262,7 +265,7 @@ a:not([class]) { color: var(--accent-text); }
   .sortmenu:last-of-type .sortmenu-pop { left: auto; right: 0; }
 }
 @media (max-width: 719px) { .sortmenu-label { font-size: 0; } .sortmenu-label::after { content: "Sort"; font-size: 15px; } }
-.pill-featured { top: auto; left: auto; bottom: 12px; right: 12px; background: #7a5b00; color: #fff; }
+.pill-featured { background: #7a5b00; color: #fff; }
 .card.featured { box-shadow: 0 0 0 2px #7a5b00, var(--shadow, 0 1px 3px rgba(0,0,0,.12)); }
 /* Portrait photos are shown whole instead of cropped. */
 .hero.tall { background: var(--fill); }

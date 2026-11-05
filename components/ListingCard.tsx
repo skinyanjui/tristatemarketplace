@@ -13,15 +13,20 @@ export function niceDate(iso: string) {
 export function ListingCard({ listing }: { listing: Listing }) {
   const cat = categoryOf(listing.kind);
   const href = `/listing/${listing.id}`;
+  // One status pill on the photo, by importance: Sold, Featured, then the date of an event or sale.
+  const top = listing.sold ? "sold" : listing.featured ? "featured" : listing.eventDate ? "date" : null;
+  const meta = [listing.condition.replace(/^Used - /, ""), (listing.eventDate && top !== "date" ? `${niceDate(listing.eventDate)} · ` : "") + (listing.place || "Location not set")].filter(Boolean);
   return (
     <article className={`card${listing.sold ? " sold" : ""}${listing.featured ? " featured" : ""}`}>
       <div className="card-photo">
         <ListingImage listing={listing} />
         <Link href={href} className="card-link" aria-label={listing.title} />
-        {listing.sold ? <span className="pill pill-sold">Sold</span> : listing.condition && <span className="pill pill-condition">{listing.condition.replace(/^Used - /, "")}</span>}
+        {top === "sold" && <span className="pill pill-top pill-sold">Sold</span>}
+        {top === "featured" && <span className="pill pill-top pill-featured">Featured</span>}
+        {top === "date" && listing.eventDate && <span className="pill pill-top pill-date">{niceDate(listing.eventDate)}</span>}
         <SaveButton id={listing.id} title={listing.title} />
         <span className="pill pill-kind" style={{ background: cat.color }}>{cat.label}</span>
-        {listing.featured && <span className="pill pill-featured">Featured</span>}
+        {listing.photoCount > 1 && <span className="pill pill-count" aria-label={`${listing.photoCount} photos`}><Icon name="photo" size={11} />{listing.photoCount}</span>}
       </div>
       <div className="card-body">
         <Link href={href} className="card-link" aria-hidden="true" tabIndex={-1} />
@@ -34,7 +39,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
         </div>
         <div className="place">
           <Icon name="pin" size={13} />
-          <span>{listing.eventDate ? `${niceDate(listing.eventDate)} · ` : ""}{listing.place || "Location not set"}</span>
+          <span>{meta.join(" · ")}</span>
         </div>
       </div>
     </article>
