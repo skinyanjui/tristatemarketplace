@@ -1,0 +1,16 @@
+import type { Metadata } from "next";
+import { SavedList } from "@/components/SavedList";
+import { getAllListings } from "@/lib/listings";
+
+export const metadata: Metadata = { title: "Saved" };
+
+export default async function Saved() {
+  const all = await getAllListings();
+  return (
+    <main className="form" style={{ maxWidth: 1120 }}>
+      <h1>Saved</h1>
+      <p className="muted" style={{ margin: 0 }}>Saved on this device. No account needed.</p>
+      <SavedList all={all} />
+    </main>
+  );
+}

@@ -46,7 +46,8 @@ export function Nav() {
           <input type="search" aria-label="Search listings" placeholder="Search Tristate Market" defaultValue={params.get("q") ?? ""} onChange={(e) => onSearch(e.target.value)} />
         </form>
         <div className="nav-actions">
-          <Link href="/account" className="nav-link">Sign in</Link>
+          <Link href="/saved" className="nav-link">Saved</Link>
+          <Link href="/account" className="nav-link">Account</Link>
           <Link href="/post" className="btn"><Icon name="plus" size={16} color="#fff" />Post a listing</Link>
         </div>
       </div>

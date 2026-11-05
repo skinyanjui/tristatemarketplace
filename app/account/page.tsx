@@ -1,20 +1,15 @@
 import type { Metadata } from "next";
-import { SavedList } from "@/components/SavedList";
+import Link from "next/link";
 import { AccountPanel } from "@/components/AccountPanel";
-import { getAllListings } from "@/lib/listings";
 
 export const metadata: Metadata = { title: "Account" };
 
-export default async function Account() {
-  const all = await getAllListings();
+export default function Account() {
   return (
     <main className="form" style={{ maxWidth: 1120 }}>
       <h1>Account</h1>
       <AccountPanel />
-      <section id="saved" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        <h2 style={{ margin: 0, fontSize: 17 }}>Saved</h2>
-        <SavedList all={all} />
-      </section>
+      <p><Link href="/saved">Looking for your saved items? They are on the Saved page.</Link></p>
     </main>
   );
 }

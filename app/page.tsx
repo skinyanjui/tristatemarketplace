@@ -26,7 +26,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       <h1 className="sr-only">Tristate Market listings</h1>
       <div className="toolbar">
         <div className="count" aria-live="polite">
-          {total} {total === 1 ? "find" : "finds"}
+          {total} {total === 1 ? "listing" : "listings"}
           {catLabel ? ` in ${catLabel}` : ""}
           {near && within ? ` within ${within} miles of ${TOWN_BY_ID[near].name.split(",")[0]}` : ""}
           {q ? ` matching "${q}"` : ""}

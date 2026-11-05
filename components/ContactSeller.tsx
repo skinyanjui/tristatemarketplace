@@ -19,7 +19,7 @@ export function ContactSeller({ listingId, sellerId, action, catId, place, sold 
     <div className="next">
       <div className="notice" role="status">Message sent! The seller will see it in their account and can reply to your email.</div>
       <Link href="/" className="btn btn-lg">Keep browsing</Link>
-      <Link href="/account#saved" className="btn btn-lg btn-ghost">View my saved items</Link>
+      <Link href="/saved" className="btn btn-lg btn-ghost">View my saved items</Link>
     </div>
   );
   if (!open) return (
