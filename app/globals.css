@@ -254,3 +254,12 @@ a:not([class]) { color: var(--accent-text); }
 .sortmenu-val { display: inline-grid; text-align: left; }
 .sortmenu-val > strong { grid-area: 1 / 1; }
 .sortmenu-val > .ghost { visibility: hidden; height: 0; overflow: hidden; }
+
+/* Phones: Price range, Distance and Sort share one row; the sort value is in the menu. */
+@media (max-width: 719px) {
+  .filters { gap: 6px !important; }
+  .filters .chip { padding-inline: 12px; white-space: nowrap; }
+  .sortmenu-val { display: none; }
+  .sortmenu:last-of-type .sortmenu-pop { left: auto; right: 0; }
+}
+@media (max-width: 719px) { .sortmenu-label { font-size: 0; } .sortmenu-label::after { content: "Sort"; font-size: 15px; } }

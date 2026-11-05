@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContactSeller } from "@/components/ContactSeller";
 import { Icon } from "@/components/Icon";
+import { CONDITION_LABEL } from "@/lib/condition-labels";
 import { ShareButton } from "@/components/ShareButton";
 import { ReportListing } from "@/components/ReportListing";
 import { Gallery } from "@/components/Gallery";
@@ -54,7 +55,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
           <section className="section">
             <h2>Details</h2>
             <dl className="facts">
-              {l.condition && <div><dt>Condition</dt><dd>{l.condition}</dd></div>}
+              {l.condition && <div><dt>{CONDITION_LABEL[l.kind] ?? "Condition"}</dt><dd>{l.condition}</dd></div>}
               {l.details.map(([k, v]) => (
                 <div key={k}><dt>{k}</dt><dd>{v}</dd></div>
               ))}
