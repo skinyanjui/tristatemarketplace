@@ -37,6 +37,10 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
             <div className="muted" style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <Icon name="pin" size={14} />{l.place} · {l.posted}
             </div>
+            <div className="mprice">
+              <span className="dprice">{l.price}</span>
+              <a href="#contact" className="btn">{cat.action.label}</a>
+            </div>
           </div>
           <section className="section">
             <h2>Description</h2>
