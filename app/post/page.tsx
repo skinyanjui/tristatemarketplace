@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Tip } from "@/components/Tip";
+import { AuthGate } from "@/components/AuthGate";
+import { supabaseBrowser } from "@/lib/supabase/client";
 import { CATEGORIES, categoryOf } from "@/lib/categories";
 
 const FIELDS: Record<string, { price: string; priceHint: string; cond: string; conds: string[] }> = {
@@ -17,17 +21,47 @@ const FIELDS: Record<string, { price: string; priceHint: string; cond: string; c
 };
 const DEFAULT = { price: "Price", priceHint: "e.g. 120", cond: "Condition", conds: ["Like new", "Used - Good", "Used - Fair", "New"] };
 
-export default function PostPage() {
+function PostForm({ uid, email }: { uid: string; email: string }) {
+  const router = useRouter();
+  const files = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
   const [cat, setCat] = useState("sale");
-  const [sent, setSent] = useState(false);
+  const [picked, setPicked] = useState(0);
   const f = FIELDS[cat] ?? DEFAULT;
 
   return (
     <form
       className="form"
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
-        setSent(true);
+        const fd = new FormData(e.currentTarget);
+        setBusy(true);
+        setError("");
+        try {
+          const sb = supabaseBrowser();
+          const photos: string[] = [];
+          for (const file of Array.from(files.current?.files ?? []).slice(0, 8)) {
+            if (file.size > 8 * 1024 * 1024) throw new Error(`${file.name} is over 8 MB.`);
+            const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+            const path = `${uid}/${crypto.randomUUID()}.${ext}`;
+            const up = await sb.storage.from("tm-listing-photos").upload(path, file, { contentType: file.type });
+            if (up.error) throw up.error;
+            photos.push(sb.storage.from("tm-listing-photos").getPublicUrl(path).data.publicUrl);
+          }
+          const raw = String(fd.get("price") ?? "").trim();
+          const price = raw && /^[\d.,\s–-]+$/.test(raw) ? "$" + raw : raw;
+          const { data, error: err } = await sb.from("tm_listings").insert({
+            seller_id: uid, seller_name: email.split("@")[0], kind: cat,
+            title: String(fd.get("title")).trim(), place: String(fd.get("place")).trim(), price,
+            condition: String(fd.get("cond") ?? ""), description: String(fd.get("desc") ?? "").trim(), photos,
+          }).select("id").single();
+          if (err) throw err;
+          router.push(`/listing/${data.id}`);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Something went wrong. Try again.");
+          setBusy(false);
+        }
       }}
     >
       <h1>Post a listing</h1>
@@ -46,45 +80,52 @@ export default function PostPage() {
 
       <section className="field">
         <span className="lbl" style={{ fontSize: 17, fontWeight: 600 }}>Photos</span>
+        <Tip id="photos">Listings with a clear first photo get the most looks. No photo? We show an illustration for your category.</Tip>
         <label className="notice" style={{ cursor: "pointer", textAlign: "center", padding: 28 }}>
-          <input type="file" accept="image/*" multiple className="sr-only" />
-          Add photos. The first one is shown on your card.
+          <input ref={files} type="file" accept="image/*" multiple className="sr-only" onChange={(e) => setPicked(e.target.files?.length ?? 0)} />
+          {picked ? `${picked} photo${picked > 1 ? "s" : ""} selected. The first one is shown on your card.` : "Add photos (up to 8). The first one is shown on your card."}
         </label>
       </section>
 
       <section style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <div className="field">
           <label htmlFor="title">Title</label>
-          <input id="title" className="input" required placeholder={`${categoryOf(cat).label}: what it is and the key detail`} />
+          <input id="title" name="title" className="input" required placeholder={`${categoryOf(cat).label}: what it is and the key detail`} />
         </div>
         <div className="row">
           <div className="field">
             <label htmlFor="price">{f.price}</label>
-            <input id="price" className="input" inputMode="decimal" placeholder={f.priceHint} />
+            <input id="price" name="price" className="input" inputMode="decimal" placeholder={f.priceHint} />
           </div>
           <div className="field" style={{ flex: "0 1 auto" }}>
             <label htmlFor="cond">{f.cond}</label>
-            <select id="cond" className="input">
+            <select id="cond" name="cond" className="input">
               {f.conds.map((o) => <option key={o}>{o}</option>)}
             </select>
           </div>
         </div>
         <div className="field">
           <label htmlFor="place">Location</label>
-          <input id="place" className="input" required placeholder="City, state or ZIP" />
+          <input id="place" name="place" className="input" required placeholder="City, state or ZIP" />
         </div>
         <div className="field">
           <label htmlFor="desc">Description</label>
-          <textarea id="desc" className="input" rows={5} placeholder="Tell buyers what makes this worth a look" />
+          <textarea id="desc" name="desc" className="input" rows={5} placeholder="Tell buyers what makes this worth a look" />
         </div>
       </section>
 
-      {sent && (
-        <div className="notice" role="status">
-          Saved as a draft on this device. Publishing turns on once sign-in and the database are connected.
-        </div>
-      )}
-      <button type="submit" className="btn btn-lg">Post listing</button>
+      {error && <div className="notice" role="alert">{error}</div>}
+      <button type="submit" className="btn btn-lg" disabled={busy}>{busy ? "Posting…" : "Post listing"}</button>
     </form>
+  );
+}
+
+export default function PostPage() {
+  return (
+    <main className="form">
+      <AuthGate next="/post" note="Sign in with your email to post a listing. No password needed.">
+        {(s) => <PostForm uid={s.user.id} email={s.user.email ?? "neighbor"} />}
+      </AuthGate>
+    </main>
   );
 }

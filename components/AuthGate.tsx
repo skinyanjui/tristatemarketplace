@@ -1,0 +1,52 @@
+"use client";
+
+import { useEffect, useState, type ReactNode } from "react";
+import type { Session } from "@supabase/supabase-js";
+import { supabaseBrowser } from "@/lib/supabase/client";
+
+export function useSession(): Session | null | undefined {
+  const [session, setSession] = useState<Session | null | undefined>(undefined);
+  useEffect(() => {
+    const sb = supabaseBrowser();
+    sb.auth.getSession().then(({ data }) => setSession(data.session));
+    const { data } = sb.auth.onAuthStateChange((_e, s) => setSession(s));
+    return () => data.subscription.unsubscribe();
+  }, []);
+  return session;
+}
+
+export function SignIn({ next = "/account", note }: { next?: string; note?: string }) {
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [msg, setMsg] = useState("");
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setState("sending");
+    const { error } = await supabaseBrowser().auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: `${location.origin}${next}` },
+    });
+    if (error) { setState("error"); setMsg(error.message); } else setState("sent");
+  }
+
+  if (state === "sent") return <div className="notice" role="status">Check {email} for a sign-in link. You can close this tab.</div>;
+  return (
+    <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {note && <p style={{ margin: 0 }}>{note}</p>}
+      <div className="field">
+        <label htmlFor="email">Email</label>
+        <input id="email" type="email" required autoComplete="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
+      </div>
+      {state === "error" && <div className="notice" role="alert">{msg}</div>}
+      <button className="btn btn-lg" disabled={state === "sending"}>{state === "sending" ? "Sending…" : "Email me a sign-in link"}</button>
+    </form>
+  );
+}
+
+export function AuthGate({ children, next, note }: { children: (s: Session) => ReactNode; next?: string; note?: string }) {
+  const session = useSession();
+  if (session === undefined) return <div className="notice">Loading…</div>;
+  if (!session) return <SignIn next={next} note={note} />;
+  return <>{children(session)}</>;
+}

@@ -1,3 +1,4 @@
+import { SaveTip } from "@/components/Tip";
 import { ListingCard } from "@/components/ListingCard";
 import { CATEGORY_BY_ID } from "@/lib/categories";
 import { getListings } from "@/lib/listings";
@@ -16,6 +17,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         {catLabel ? ` in ${catLabel}` : ""}
         {q ? ` matching "${q}"` : ""}
       </div>
+      <SaveTip />
       {listings.length > 0 ? (
         <div className="grid">
           {listings.map((l) => (
