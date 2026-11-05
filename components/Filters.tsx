@@ -138,7 +138,10 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
           )}
         </div>
         <button type="button" className="chip" aria-pressed={wanted} onClick={() => set({ wanted: wanted ? "" : "1" })}>Wanted</button>
-        <button type="button" className="chip" aria-pressed={verified} onClick={() => set({ verified: verified ? "" : "1" })}>Verified</button>
+        <span className="vswitch">
+          <span id="vsw-l">Verified</span>
+          <button type="button" role="switch" aria-checked={verified} aria-labelledby="vsw-l" className="switch" onClick={() => set({ verified: verified ? "" : "1" })}><i /></button>
+        </span>
         <SortMenu label="Sort by" options={sortOptions} primary={primarySorts} value={sort} onChange={(v) => set({ sort: v })} />
         {tokens.map((t) => (
           <button key={t.label} type="button" className="chip" onClick={() => set(t.clear)} aria-label={`Clear: ${t.label}`}>{t.label} ✕</button>

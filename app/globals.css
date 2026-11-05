@@ -626,3 +626,12 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
 
 /* Card body is three rows: title, price + action, location. */
 .card-body, .card.sponsored .card-body, .card.ad .card-body { height: 106px; }
+
+/* Verified-only: a plain label with a switch to its right, no border. */
+.vswitch { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 4px; font-size: var(--fs-ui); font-weight: 500; color: var(--label); }
+.switch { position: relative; width: 51px; height: 31px; padding: 0; border: 0; border-radius: 999px; background: color-mix(in srgb, var(--label) 22%, var(--surface)); cursor: pointer; transition: background .2s; flex: none; }
+.switch i { position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .2s; }
+.switch[aria-checked="true"] { background: var(--ok); }
+.switch[aria-checked="true"] i { transform: translateX(20px); }
+.switch:focus-visible { outline: 2px solid var(--accent-fill); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .switch, .switch i { transition: none; } }
