@@ -42,11 +42,12 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
   const town = opts.near ? TOWN_BY_ID[opts.near] : undefined;
   let nearIds: string[] | null = null;
   let nearOrder: Map<string, number> | null = null;
-  if (town && opts.within) {
-    const { data, error: nearErr } = await sb.rpc("tm_near_ranked", { c_lat: town.lat, c_lng: town.lng, miles: opts.within });
+  if (town && (opts.within || opts.sort === "near")) {
+    const { data, error: nearErr } = await sb.rpc("tm_near_ranked", { c_lat: town.lat, c_lng: town.lng, miles: opts.within ?? 5000 });
     if (nearErr) throw new Error(`Could not measure distance: ${nearErr.message}`);
     const hits = (data ?? []) as { id: string; dist: number }[];
-    nearIds = hits.length ? hits.map((h) => h.id) : ["-"];
+    // A radius filters the results; without one, distance only orders them (listings with no known town go last).
+    if (opts.within) nearIds = hits.length ? hits.map((h) => h.id) : ["-"];
     nearOrder = new Map(hits.map((h, i) => [h.id, i]));
   }
   const q = (opts.q ?? "").trim().slice(0, 100);
@@ -96,7 +97,7 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
   let items = (data as unknown as Row[]).map(fromRow);
   if (byRank && order) {
     // Best match first; sold listings sink below active ones with the same relevance bucket.
-    items = items.sort((a, b) => Number(!!a.sold) - Number(!!b.sold) || (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0)).slice(from, from + PAGE_SIZE);
+    items = items.sort((a, b) => Number(!!a.sold) - Number(!!b.sold) || (order.get(a.id) ?? 1e9) - (order.get(b.id) ?? 1e9)).slice(from, from + PAGE_SIZE);
   }
   return { items: page === 1 ? [...featured, ...items] : items, total, page, pages: Math.max(1, Math.ceil((byRank ? (count ?? 0) : (count ?? 0)) / PAGE_SIZE)) };
 }

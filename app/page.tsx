@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { Suspense } from "react";
 import { Filters } from "@/components/Filters";
 import { ListingCard } from "@/components/ListingCard";
 import { CATEGORY_BY_ID } from "@/lib/categories";
-import { TOWN_BY_ID } from "@/lib/places";
+import { DEFAULT_TOWN, TOWN_BY_ID, nearestTown } from "@/lib/places";
 import { getListings, type Sort } from "@/lib/listings";
 
 export default async function Home({ searchParams }: PageProps<"/">) {
@@ -12,9 +13,23 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const q = typeof sp.q === "string" ? sp.q : "";
   const cat = typeof sp.cat === "string" ? sp.cat : "all";
   const num = (k: string) => { const v = sp[k]; const n = typeof v === "string" && v !== "" ? Number(v) : NaN; return Number.isFinite(n) && n >= 0 ? n : undefined; };
-  const near = typeof sp.near === "string" && TOWN_BY_ID[sp.near] ? sp.near : undefined;
+  const chosen = typeof sp.near === "string" && TOWN_BY_ID[sp.near] ? sp.near : undefined;
   const within = num("within");
-  const sort: Sort = (["best", "near", "old", "soon", "low", "high", "az", "za"] as const).find((x) => x === sp.sort && (x !== "near" || (!!near && !!within))) ?? (q ? "best" : near && within ? "near" : cat === "event" || cat === "sale" ? "soon" : "new");
+  // Where "closest" is measured from: the town they picked, else the town nearest to where they are
+  // (from the request's location headers), else Evansville. Anyone more than 150 miles away gets Evansville.
+  let origin = chosen ?? DEFAULT_TOWN;
+  if (!chosen) {
+    const h = await headers();
+    const lat = Number(h.get("x-vercel-ip-latitude")), lng = Number(h.get("x-vercel-ip-longitude"));
+    if (h.get("x-vercel-ip-latitude") && Number.isFinite(lat) && Number.isFinite(lng)) {
+      const n = nearestTown(lat, lng);
+      if (n.miles <= 150) origin = n.town.id;
+    }
+  }
+  const originName = TOWN_BY_ID[origin].name.split(",")[0];
+  const defaultSort: Sort = cat === "event" || cat === "sale" ? "soon" : "near";
+  const sort: Sort = (["new", "best", "near", "old", "soon", "low", "high", "az", "za"] as const).find((x) => x === sp.sort) ?? defaultSort;
+  const near = origin;
   const pageNum = typeof sp.page === "string" ? Number(sp.page) || 1 : 1;
   const { items: listings, total, page, pages } = await getListings({ q, cat, min: num("min"), max: num("max"), sort, page: pageNum, near, within });
   const hrefFor = (n: number) => { const u = new URLSearchParams(); for (const [k, v] of Object.entries(sp)) if (typeof v === "string" && k !== "page") u.set(k, v); if (n > 1) u.set("page", String(n)); const qs = u.toString(); return qs ? `/?${qs}` : "/"; };
@@ -28,11 +43,12 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         <div className="count" aria-live="polite">
           {total} {total === 1 ? "listing" : "listings"}
           {catLabel ? ` in ${catLabel}` : ""}
-          {near && within ? ` within ${within} miles of ${TOWN_BY_ID[near].name.split(",")[0]}` : ""}
+          {within ? ` within ${within} miles of ${originName}` : ""}
           {q ? ` matching "${q}"` : ""}
+          {sort === "near" && !within ? ` · closest to ${originName} first` : ""}
         </div>
         <Suspense fallback={<div style={{ height: 36 }} />}>
-          <Filters />
+          <Filters origin={origin} defaultSort={defaultSort} />
         </Suspense>
       </div>
       {listings.length > 0 ? (

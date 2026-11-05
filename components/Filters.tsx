@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SortMenu } from "./SortMenu";
-import { DEFAULT_TOWN, RADII, TOWNS, TOWN_BY_ID } from "@/lib/places";
+import { RADII, TOWNS, TOWN_BY_ID } from "@/lib/places";
 
 const SORTS = [
   { value: "new", label: "Newest first" },
@@ -16,7 +16,7 @@ const SORTS = [
 ];
 
 /** Price range and sort, kept in the URL. Active filters show as removable tokens. */
-export function Filters() {
+export function Filters({ origin, defaultSort }: { origin: string; defaultSort: string }) {
   const router = useRouter();
   const params = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -39,11 +39,10 @@ export function Filters() {
     document.addEventListener("mousedown", away);
     return () => document.removeEventListener("mousedown", away);
   }, [distOpen]);
-  const cat = params.get("cat");
   const q = params.get("q");
-  const fallback = q ? "best" : near && within && TOWN_BY_ID[near] ? "near" : cat === "event" || cat === "sale" ? "soon" : "new";
+  const fallback = defaultSort;
   const rawSort = params.get("sort");
-  const sort = rawSort && !(rawSort === "near" && fallback !== "near" && !(within && TOWN_BY_ID[near])) ? rawSort : fallback;
+  const sort = rawSort ?? fallback;
 
   function set(next: Record<string, string>) {
     const sp = new URLSearchParams(params.toString());
@@ -60,7 +59,8 @@ export function Filters() {
   if (min) tokens.push({ label: `From $${Number(min).toLocaleString()}`, clear: { min: "" } });
   if (max) tokens.push({ label: `Up to $${Number(max).toLocaleString()}`, clear: { max: "" } });
 
-  if (within && TOWN_BY_ID[near]) tokens.push({ label: `Within ${within} mi of ${TOWN_BY_ID[near].name.split(",")[0]}`, clear: { near: "", within: "", ...(rawSort === "near" ? { sort: "" } : {}) } });
+  if (within && TOWN_BY_ID[near]) tokens.push({ label: `Within ${within} mi of ${TOWN_BY_ID[near].name.split(",")[0]}`, clear: { near: "", within: "" } });
+  else if (TOWN_BY_ID[near]) tokens.push({ label: `From ${TOWN_BY_ID[near].name.split(",")[0]}`, clear: { near: "" } });
 
   return (
     <>
@@ -105,21 +105,22 @@ export function Filters() {
             >
               <div className="field">
                 <label htmlFor="within">How far?</label>
-                <select id="within" name="within" className="input" defaultValue={within || "25"}>
+                <select id="within" name="within" className="input" defaultValue={within}>
+                  <option value="">Any distance</option>
                   {RADII.map((r) => <option key={r} value={r}>{r} miles</option>)}
                 </select>
               </div>
               <div className="field">
                 <label htmlFor="near">From</label>
-                <select id="near" name="near" className="input" defaultValue={near || DEFAULT_TOWN}>
+                <select id="near" name="near" className="input" defaultValue={near || origin}>
                   {TOWNS.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
                 </select>
               </div>
-              <button className="btn">Show nearby</button>
+              <button className="btn">Apply</button>
             </form>
           )}
         </div>
-        <SortMenu label="Sort by" options={[...(q ? [{ value: "best", label: "Best match" }] : []), ...(within && TOWN_BY_ID[near] ? [{ value: "near", label: "Closest first" }] : []), ...SORTS]} value={sort} onChange={(v) => set({ sort: v })} />
+        <SortMenu label="Sort by" options={[...(q ? [{ value: "best", label: "Best match" }] : []), { value: "near", label: "Closest first" }, ...SORTS]} value={sort} onChange={(v) => set({ sort: v })} />
         {tokens.map((t) => (
           <button key={t.label} type="button" className="chip" onClick={() => set(t.clear)} aria-label={`Clear: ${t.label}`}>{t.label} ✕</button>
         ))}

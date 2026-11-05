@@ -27,3 +27,15 @@ export function townFor(place: string): Town | null {
   const p = place.trim().toLowerCase().replace(/\s+/g, " ");
   return TOWNS.find((t) => t.name.toLowerCase() === p) ?? null;
 }
+
+const rad = (d: number) => (d * Math.PI) / 180;
+export function milesBetween(aLat: number, aLng: number, bLat: number, bLng: number) {
+  const h = Math.sin(rad(bLat - aLat) / 2) ** 2 + Math.cos(rad(aLat)) * Math.cos(rad(bLat)) * Math.sin(rad(bLng - aLng) / 2) ** 2;
+  return 3958.8 * 2 * Math.asin(Math.sqrt(h));
+}
+/** The known town closest to a point, and how far away it is. */
+export function nearestTown(lat: number, lng: number): { town: Town; miles: number } {
+  let best = { town: TOWNS[0], miles: Infinity };
+  for (const t of TOWNS) { const miles = milesBetween(lat, lng, t.lat, t.lng); if (miles < best.miles) best = { town: t, miles }; }
+  return best;
+}
