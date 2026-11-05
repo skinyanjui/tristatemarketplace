@@ -76,7 +76,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
       }}
     >
       <fieldset style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }}>
-        <legend style={{ padding: 0, marginBottom: 12, fontSize: 17, fontWeight: 600 }}>What are you posting?</legend>
+        <legend className="h3" style={{ padding: 0, marginBottom: 12 }}>What are you posting?</legend>
         <div className="tiles">
           {CATEGORIES.map((c) => (
             <button key={c.id} type="button" className="tile" aria-pressed={cat === c.id} onClick={() => setCat(c.id)}>
@@ -88,7 +88,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
       </fieldset>
 
       <section className="field">
-        <span className="lbl" style={{ fontSize: 17, fontWeight: 600 }}>Photos</span>
+        <span className="lbl h3">Photos</span>
         <label className="notice" style={{ cursor: "pointer", textAlign: "center", padding: 28 }}>
           <input ref={files} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple className="sr-only" onChange={(e) => setPicked(e.target.files?.length ?? 0)} />
           {picked ? `${picked} photo${picked > 1 ? "s" : ""} selected. The first one is shown on your card.` : "Add photos (up to 8). The first one is shown on your card."}

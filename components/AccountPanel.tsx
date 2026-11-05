@@ -115,9 +115,9 @@ export function AccountPanel() {
             <span style={{ flex: 1 }}>Signed in as <strong>{s.user.email}</strong></span>
             <button className="btn" onClick={() => supabaseBrowser().auth.signOut()}>Sign out</button>
           </div>
-          <h2 style={{ margin: 0, fontSize: 17 }}>Your listings</h2>
+          <h2 className="h3">Your listings</h2>
           <Mine uid={s.user.id} />
-          <h2 style={{ margin: 0, fontSize: 17 }}>Messages</h2>
+          <h2 className="h3">Messages</h2>
           <Inbox uid={s.user.id} />
           <ReportsReview uid={s.user.id} />
         </section>

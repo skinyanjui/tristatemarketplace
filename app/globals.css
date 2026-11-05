@@ -12,6 +12,7 @@
   --glass: rgba(255, 255, 255, 0.72);
   --hair: rgba(0, 0, 0, 0.3);
   --search: rgba(118, 118, 128, 0.14);
+  --fs-cap: 12px; --fs-sm: 13px; --fs-ui: 14px; --fs-body: 16px; --fs-h3: 17px; --fs-h2: 20px; --fs-h1: 28px;
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Helvetica Neue", Arial, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
@@ -326,8 +327,6 @@ a:not([class]) { color: var(--accent-text); }
   .panel > .dprice { grid-column: 1; grid-row: 1; }
   .panel > .cta { grid-column: 2; grid-row: 1; width: auto; }
   .panel > .cta .btn { width: auto; padding: 0 22px; }
-  .panel > .seller { grid-column: 1; grid-row: 2; }
-  .panel > .rep { grid-column: 2; grid-row: 2; justify-self: end; font-size: 13px; }
   .dgrid { gap: 16px; }
   .section { gap: 8px; }
   .facts { grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -342,3 +341,50 @@ a:not([class]) { color: var(--accent-text); }
 
 .sellername { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
 .seller { min-width: 0; }
+
+/* ================= Type scale =================
+   12 caption (pills, field labels) · 13 small (meta, location, chips) · 14 UI (buttons, titles, notices)
+   16 body and inputs · 17 section heading · 20 sub-heading · 28 page title (24 on phones)
+   Weights: 400 reading text · 500 UI and meta · 600 emphasis, buttons, card titles · 700 headings and prices only */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { font-size: var(--fs-body); }
+.pill { font-size: var(--fs-cap); font-weight: 600; }
+.pill-condition, .gal-count { font-size: var(--fs-cap); }
+.chip, .filters .chip, #sort { font-size: var(--fs-ui); font-weight: 500; }
+.btn { font-size: var(--fs-ui); font-weight: 600; }
+.btn-lg { font-size: var(--fs-body); }
+.nav-link { font-size: var(--fs-ui); font-weight: 500; }
+.count, .foot, .linkbtn { font-size: var(--fs-sm); }
+.muted { font-size: var(--fs-ui); }
+.notice { font-size: var(--fs-ui); line-height: 1.45; }
+.place { font-size: var(--fs-sm); line-height: 18px; }
+.act span { font-size: var(--fs-sm); }
+.ctitle { font-size: var(--fs-ui); line-height: 20px; font-weight: 600; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; height: 40px; }
+.card-body { height: 122px; }
+.skel-card { padding-top: calc(87.5% + 122px); }
+.price { font-size: 20px; font-weight: 700; }
+.facts dt { font-size: var(--fs-cap); font-weight: 500; }
+.facts dd { font-size: var(--fs-body); font-weight: 500; }
+.section h2, .prose h2 { font-size: var(--fs-h3); font-weight: 600; }
+.h3 { margin: 0; font-size: var(--fs-h3); font-weight: 600; }
+.dtitle { font-size: var(--fs-h1); }
+.keep a { font-size: var(--fs-ui); }
+.tab { font-size: 11px; font-weight: 500; }
+.tab[aria-current="page"] { font-weight: 600; }
+.sortmenu-label::after { font-size: var(--fs-ui); }
+@media (max-width: 719px) {
+  .dtitle, .dprice, .form h1 { font-size: 24px; line-height: 30px; }
+  .keep a { font-size: var(--fs-sm); }
+}
+@container (max-width: 200px) {
+  .price { font-size: 17px; }
+  .act span { font-size: var(--fs-sm); }
+}
+@container (max-width: 172px) {
+  .price { font-size: 15px; letter-spacing: -0.04em; }
+  .act span { padding: 0 8px; font-size: var(--fs-cap); }
+  .card-row { gap: 4px; }
+}
+.reportrow { width: 100%; display: flex; justify-content: center; }
+.reportrow .linkbtn { text-align: center; color: var(--label2); text-decoration: underline; text-underline-offset: 2px; }
+@container (max-width: 160px) { .price { font-size: 14px; } }

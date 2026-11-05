@@ -64,6 +64,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
             <Link href="/"><Icon name="grid" size={20} /><span>All listings</span></Link>
             <Link href="/post"><Icon name="plus" size={20} /><span>Post your own</span></Link>
           </nav>
+          <div className="reportrow"><ReportListing listingId={l.id} /></div>
         </div>
         <aside className="panel" id="contact">
           <div className="dprice">{l.price}</div>
@@ -72,7 +73,6 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
             <span className="avatar" aria-hidden="true">{initials}</span>
             <div className="sellername"><strong>{l.seller.name}</strong><span className="muted"> · {l.seller.meta}</span></div>
           </div>
-          <ReportListing listingId={l.id} />
         </aside>
       </div>
     </main>

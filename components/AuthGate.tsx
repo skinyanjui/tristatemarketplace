@@ -34,7 +34,7 @@ export function SignIn({ next = "/account", note, title = "Sign in" }: { next?: 
   if (state === "sent") return <div className="notice" role="status" style={{ maxWidth: 420 }}>Check your inbox! We sent a sign-in link to {email}. Wrong address or nothing arrived? <button type="button" className="linkbtn" onClick={() => setState("idle")}>Try again</button>. <Link href="/">Back to listings</Link></div>;
   return (
     <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%", maxWidth: 420 }}>
-      <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: "-0.01em" }}>{title}</h2>
+      <h2 style={{ margin: 0, fontSize: "var(--fs-h2)", fontWeight: 700, letterSpacing: "-0.01em" }}>{title}</h2>
       {note && <p style={{ margin: 0, color: "var(--label2)" }}>{note}</p>}
       <p className="muted" style={{ margin: 0 }}>Free. We email you a one-time link, so there is no password.</p>
       <div className="field">

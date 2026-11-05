@@ -38,7 +38,7 @@ export function ReportsReview({ uid }: { uid: string }) {
   if (!admin) return null;
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      <h2 style={{ margin: 0, fontSize: 17 }}>Reports to review ({rows.length})</h2>
+      <h2 className="h3">Reports to review ({rows.length})</h2>
       {rows.length === 0 && <div className="notice">No open reports.</div>}
       {rows.map((r) => (
         <div key={r.id} className="notice" style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
