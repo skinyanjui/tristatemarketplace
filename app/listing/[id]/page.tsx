@@ -61,10 +61,10 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
               ))}
             </dl>
           </section>
-          <nav className="section next-row" aria-label="Keep browsing">
-            <Link href={`/?cat=${cat.id}`} className="btn btn-ghost">More in {cat.label}</Link>
-            <Link href="/" className="btn btn-ghost">All listings</Link>
-            <Link href="/post" className="btn btn-ghost"><Icon name="plus" size={16} />Post your own</Link>
+          <nav className="keep" aria-label="Keep browsing">
+            <Link href={`/?cat=${cat.id}`}><Icon name="tag" size={20} /><span>More in {cat.label}</span></Link>
+            <Link href="/"><Icon name="grid" size={20} /><span>All listings</span></Link>
+            <Link href="/post"><Icon name="plus" size={20} /><span>Post your own</span></Link>
           </nav>
         </div>
         <aside className="panel" id="contact">

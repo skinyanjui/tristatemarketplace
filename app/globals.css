@@ -298,3 +298,14 @@ a:not([class]) { color: var(--accent-text); }
   .price { font-size: 14.5px; letter-spacing: -0.04em; }
   .act span { padding: 0 9px; font-size: 12.5px; }
 }
+
+/* Keep browsing: one row at every width, tiles share the space equally */
+.keep { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; width: 100%; }
+.keep a { min-height: 56px; padding: 10px 14px; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 14px; background: var(--surface); box-shadow: 0 0 0 1px var(--ring-soft); color: var(--label); font-size: 14px; font-weight: 600; letter-spacing: -0.01em; text-align: left; }
+.keep a svg { flex: none; color: var(--accent-text); }
+.keep a span { min-width: 0; overflow-wrap: anywhere; line-height: 1.2; }
+@media (hover: hover) { .keep a:hover { background: var(--fill); } }
+@media (max-width: 560px) {
+  .keep { gap: 8px; }
+  .keep a { flex-direction: column; gap: 6px; padding: 12px 6px; font-size: 12.5px; text-align: center; min-height: 72px; }
+}
