@@ -24,6 +24,8 @@ export type Listing = {
   /** Listing coordinates; only set on the single-listing fetch. */
   lat?: number;
   lng?: number;
+  /** A paid placement. Always shown with a "Sponsored" label. */
+  sponsored?: boolean;
   featured?: boolean;
   featuredUntil?: string;
 };

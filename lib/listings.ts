@@ -7,10 +7,10 @@ import type { Listing } from "./types";
 type Row = {
   id: string; kind: string; title: string; place: string; price: string; condition: string;
   description: string; details: [string, string][] | null; photos: string[] | null;
-  seller_id: string | null; seller_name: string; seller_meta: string; created_at: string; status: string; event_date: string | null; featured_until?: string | null;
+  seller_id: string | null; seller_name: string; seller_meta: string; created_at: string; status: string; event_date: string | null; featured_until?: string | null; sponsored_until?: string | null;
 };
 
-const COLUMNS = "id,seller_id,kind,title,place,price,condition,description,details,photos,seller_name,seller_meta,created_at,status,event_date,featured_until";
+const COLUMNS = "id,seller_id,kind,title,place,price,condition,description,details,photos,seller_name,seller_meta,created_at,status,event_date,featured_until,sponsored_until";
 
 function posted(iso: string): string {
   const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
@@ -25,7 +25,7 @@ export function fromRow(r: Row): Listing {
     id: r.id, kind: r.kind, title: r.title, place: r.place, price: r.price, condition: r.condition,
     description: r.description, details: r.details ?? [],
     seller: { name: r.seller_name || "Neighbor", meta: r.seller_meta },
-    posted: posted(r.created_at), photoCount: photos.length, photos, sellerId: r.seller_id, sold: r.status === "sold", eventDate: r.event_date ?? undefined, featured: !!r.featured_until && new Date(r.featured_until) > new Date(), featuredUntil: r.featured_until ?? undefined,
+    posted: posted(r.created_at), photoCount: photos.length, photos, sellerId: r.seller_id, sold: r.status === "sold", eventDate: r.event_date ?? undefined, featured: !!r.featured_until && new Date(r.featured_until) > new Date(), sponsored: !!r.sponsored_until && new Date(r.sponsored_until) > new Date(), featuredUntil: r.featured_until ?? undefined,
   };
 }
 
@@ -80,10 +80,17 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
   const { data: fData, error: fErr } = await base(false).eq("status", "active").gt("featured_until", new Date().toISOString())
     .order("featured_until", { ascending: false }).limit(8);
   if (fErr) throw new Error(`Could not load listings: ${fErr.message}`);
-  const featured = ((fData ?? []) as unknown as Row[]).map(fromRow).map((l) => ({ ...l, featured: true }));
+  // Sponsored placements: clearly labelled ads that match the same filters, shown on page 1 at fixed slots.
+  const { data: sData, error: sErr } = await base(false).eq("status", "active").gt("sponsored_until", new Date().toISOString())
+    .order("sponsored_until", { ascending: false }).limit(2);
+  if (sErr) throw new Error(`Could not load listings: ${sErr.message}`);
+  const sponsored = ((sData ?? []) as unknown as Row[]).map(fromRow).map((l) => ({ ...l, sponsored: true, featured: false }));
+  const sponsoredIds = new Set(sponsored.map((l) => l.id));
+  const featured = ((fData ?? []) as unknown as Row[]).map(fromRow).filter((l) => !sponsoredIds.has(l.id)).map((l) => ({ ...l, featured: true }));
 
   let query = base(true);
-  if (featured.length) query = query.not("id", "in", `(${featured.map((f) => f.id).join(",")})`);
+  const pinned = [...featured, ...sponsored].map((f) => f.id);
+  if (pinned.length) query = query.not("id", "in", `(${pinned.join(",")})`);
   query = query.order("status", { ascending: true });
   if (opts.sort === "low" || opts.sort === "high") query = query.order("price_value", { ascending: opts.sort === "low", nullsFirst: false });
   if (opts.sort === "soon") query = query.order("event_date", { ascending: true, nullsFirst: false });
@@ -95,14 +102,16 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
   if (!byRank) query = query.range(from, from + PAGE_SIZE - 1);
   const { data, error, count } = await query;
   if (error) throw new Error(`Could not load listings: ${error.message}`);
-  const total = (count ?? 0) + featured.length;
+  const total = (count ?? 0) + featured.length + sponsored.length;
   let items = (data as unknown as Row[]).map(fromRow);
   if (byRank && order) {
     // Best match first; sold listings sink below active ones with the same relevance bucket.
     items = items.sort((a, b) => Number(!!a.sold) - Number(!!b.sold) || (order.get(a.id) ?? 1e9) - (order.get(b.id) ?? 1e9)).slice(from, from + PAGE_SIZE);
   }
   const withMiles = (l: Listing): Listing => ({ ...l, miles: nearDist.get(l.id) });
-  return { items: (page === 1 ? [...featured, ...items] : items).map(withMiles), total, page, pages: Math.max(1, Math.ceil((byRank ? (count ?? 0) : (count ?? 0)) / PAGE_SIZE)) };
+  const list = page === 1 ? [...featured, ...items] : items;
+  if (page === 1) sponsored.forEach((ad, i) => list.splice(Math.min(2 + i * 5, list.length), 0, ad)); // slots 3 and 8
+  return { items: list.map(withMiles), total, page, pages: Math.max(1, Math.ceil((byRank ? (count ?? 0) : (count ?? 0)) / PAGE_SIZE)) };
 }
 
 export async function getAllListings(): Promise<Listing[]> {

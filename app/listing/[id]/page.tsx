@@ -93,10 +93,11 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
         <aside className="panel" id="contact">
           <div className="dprice">{l.price}</div>
           <ContactSeller listingId={l.id} sellerId={l.sellerId ?? null} action={cat.action} catId={cat.id} place={l.place} sold={l.sold} />
-          <div className="seller">
+          <Link href={l.sellerId ? `/seller/${l.sellerId}` : "#contact"} className="seller seller-link" aria-label={`View ${l.seller.name}'s profile`}>
             <span className="avatar" aria-hidden="true">{initials}</span>
             <div className="sellername"><strong>{l.seller.name}</strong><span className="muted"> · {l.seller.meta}</span></div>
-          </div>
+            <Icon name="chev" size={16} />
+          </Link>
         </aside>
       </div>
     </main>

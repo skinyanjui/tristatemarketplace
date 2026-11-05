@@ -15,14 +15,15 @@ export function ListingCard({ listing }: { listing: Listing }) {
   const cat = categoryOf(listing.kind);
   const href = `/listing/${listing.id}`;
   // One status pill on the photo, by importance: Sold, Featured, then the date of an event or sale.
-  const top = listing.sold ? "sold" : listing.featured ? "featured" : listing.eventDate ? "date" : null;
+  const top = listing.sold ? "sold" : listing.sponsored ? "sponsored" : listing.featured ? "featured" : listing.eventDate ? "date" : null;
   const dateInRow = !!listing.eventDate && top !== "date";
   return (
-    <article className={`card${listing.sold ? " sold" : ""}${listing.featured ? " featured" : ""}`}>
+    <article className={`card${listing.sold ? " sold" : ""}${listing.featured ? " featured" : ""}${listing.sponsored ? " sponsored" : ""}`}>
       <div className="card-photo">
         <ListingImage listing={listing} />
         <Link href={href} className="card-link" aria-label={listing.title} />
         {top === "sold" && <span className="pill pill-top pill-sold">Sold</span>}
+        {top === "sponsored" && <span className="pill pill-top pill-sponsored">Sponsored</span>}
         {top === "featured" && <span className="pill pill-top pill-featured">Featured</span>}
         {top === "date" && listing.eventDate && <span className="pill pill-top pill-date">{niceDate(listing.eventDate)}</span>}
         <SaveButton id={listing.id} title={listing.title} />

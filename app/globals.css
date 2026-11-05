@@ -546,3 +546,20 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
   .glance dd { font-size: var(--fs-body); line-height: 22px; }
 }
 /* ===== end glance strip ===== */
+
+/* Sponsored: always labelled, never dressed up as an organic result */
+.pill-sponsored { background: rgba(20, 20, 24, 0.78); color: #fff; box-shadow: 0 0 0 1px rgba(255,255,255,.25); }
+
+/* ===== seller profile + verified ===== */
+.seller-link { border-radius: 12px; margin: -6px; padding: 6px; }
+.seller-link > svg { margin-left: auto; flex: none; transform: rotate(-90deg); color: var(--label2); }
+@media (hover: hover) { .seller-link:hover { background: var(--fill); } }
+.verified { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 10px 0 8px; border-radius: 9999px; background: var(--ok-bg); color: var(--ok); box-shadow: 0 0 0 1px var(--ok-ring); font-size: var(--fs-sm); font-weight: 600; white-space: nowrap; }
+.verified-sm { height: 20px; font-size: var(--fs-cap); padding: 0 8px 0 6px; }
+.profile { display: flex; gap: 16px; align-items: center; padding: 8px 0 16px; }
+.avatar-lg { width: 72px; height: 72px; font-size: 24px; flex: none; }
+.profile-text { min-width: 0; }
+.profile-text h1 { margin: 0; font-size: var(--fs-h1); font-weight: 700; }
+.profile-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; margin-top: 6px; }
+.profile-note { margin: 6px 0 0; }
+@media (max-width: 719px) { .profile-text h1 { font-size: 24px; } .avatar-lg { width: 56px; height: 56px; font-size: 20px; } }
