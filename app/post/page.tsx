@@ -10,7 +10,7 @@ import { toast } from "@/components/Toaster";
 import { useRouter } from "next/navigation";
 import { AuthGate } from "@/components/AuthGate";
 import { supabaseBrowser } from "@/lib/supabase/client";
-import { CATEGORIES, categoryOf } from "@/lib/categories";
+import { GROUPS, categoriesInGroup, categoryOf } from "@/lib/categories";
 
 const FIELDS: Record<string, { price: string; priceHint: string; cond: string; conds: string[] }> = {
   car: { price: "Price", priceHint: "e.g. 18,500", cond: "Condition", conds: ["Used - Excellent", "Used - Good", "Used - Fair", "For parts"] },
@@ -95,14 +95,19 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
     >
       <fieldset style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }}>
         <legend className="h3" style={{ padding: 0, marginBottom: 12 }}>What are you posting?</legend>
-        <div className="tiles">
-          {CATEGORIES.map((c) => (
-            <button key={c.id} type="button" className="tile" aria-pressed={cat === c.id} onClick={() => setCat(c.id)}>
-              <span className="dot" style={{ background: c.color }} />
-              {c.label}
-            </button>
-          ))}
-        </div>
+        {GROUPS.map((g) => (
+          <div key={g.id} className="tilegroup" role="group" aria-labelledby={`tg-${g.id}`}>
+            <div id={`tg-${g.id}`} className="catgroup">{g.label}</div>
+            <div className="tiles">
+              {categoriesInGroup(g.id).map((c) => (
+                <button key={c.id} type="button" className="tile" aria-pressed={cat === c.id} onClick={() => setCat(c.id)}>
+                  <span className="dot" style={{ background: c.color }} />
+                  {c.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
       </fieldset>
 
       <section className="field">
