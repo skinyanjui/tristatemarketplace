@@ -43,3 +43,5 @@ Optional env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE
 Remove the demo listings with `delete from public.tm_listings where is_demo;`.
 
 Features: category browsing, search, price filter and sort (database-side via `price_value`), 48-per-page paging, photo gallery, save, buyer-seller messaging, reporting with moderator review (`tm_admins`), Sold badge (owners mark listings sold from Account), and a Share button.
+
+Featured listings: owners press Feature in Account (7 days, pinned to the top of page 1 with a Featured badge). Sample mode is on by default (free, `tm_settings.featured_demo = 'on'`). To charge: set `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `SUPABASE_SERVICE_ROLE_KEY` (and optionally `FEATURE_PRICE_CENTS`, default 500) in Vercel, point a Stripe webhook for `checkout.session.completed` at `/api/stripe-webhook`, then run `update tm_settings set value = 'off' where key = 'featured_demo';`.

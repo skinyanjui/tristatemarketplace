@@ -19,4 +19,6 @@ export type Listing = {
   sold?: boolean;
   /** ISO date (YYYY-MM-DD) for events and garage sales. */
   eventDate?: string;
+  featured?: boolean;
+  featuredUntil?: string;
 };
