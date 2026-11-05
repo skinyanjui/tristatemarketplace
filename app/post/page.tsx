@@ -36,6 +36,13 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
   const [previews, setPreviews] = useState<string[]>([]);
   const [titleLen, setTitleLen] = useState(0);
   const [descLen, setDescLen] = useState(0);
+  // Warn before leaving with a half-written listing (closing the tab, reload, back button).
+  const dirty = useRef(false);
+  useEffect(() => {
+    const warn = (e: BeforeUnloadEvent) => { if (dirty.current) { e.preventDefault(); e.returnValue = ""; } };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, []);
   useEffect(() => () => previews.forEach((u) => URL.revokeObjectURL(u)), [previews]);
   const [known, setKnown] = useState(true);
   const f = FIELDS[cat] ?? DEFAULT;
@@ -43,6 +50,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
   return (
     <form
       className="form"
+      onChange={() => { dirty.current = true; }}
       onSubmit={async (e) => {
         e.preventDefault();
         const fd = new FormData(e.currentTarget);
@@ -73,6 +81,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
             condition: String(fd.get("cond") ?? ""), lat: townFor(String(fd.get("place") ?? ""))?.lat ?? null, lng: townFor(String(fd.get("place") ?? ""))?.lng ?? null, event_date: (cat === "event" || cat === "sale") ? String(fd.get("date") || "") || null : null, description: String(fd.get("desc") ?? "").trim(), photos,
           }).select("id").single();
           if (err) throw err;
+          dirty.current = false;
           toast("Your listing is live!");
           router.push(`/listing/${data.id}`);
         } catch (err) {
