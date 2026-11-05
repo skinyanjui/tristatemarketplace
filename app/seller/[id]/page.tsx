@@ -49,6 +49,7 @@ export default async function SellerPage({ params }: PageProps<"/seller/[id]">) 
             {s.verified && <VerifiedBadge />}
             {since && <span className="muted">Selling since {since}</span>}
             <span className="muted">{active.length} {active.length === 1 ? "listing" : "listings"} for sale</span>
+            {s.listings.length - active.length > 0 && <span className="muted">{s.listings.length - active.length} sold</span>}
           </div>
           {s.verified && <p className="muted profile-note">Verified by Tristate Market.</p>}
         </div>

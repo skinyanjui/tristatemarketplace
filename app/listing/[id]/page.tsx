@@ -12,6 +12,8 @@ import { artFor } from "@/components/ListingArt";
 import { SaveButton } from "@/components/SaveButton";
 import { categoryOf } from "@/lib/categories";
 import { getListing } from "@/lib/listings";
+import { VerifiedBadge } from "@/components/VerifiedBadge";
+import { supabaseServer } from "@/lib/supabase/client";
 import { glance } from "@/lib/glance";
 import { DEFAULT_TOWN, TOWN_BY_ID, milesBetween, nearestTown } from "@/lib/places";
 import { headers } from "next/headers";
@@ -39,6 +41,8 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
     }
     miles = milesBetween(origin.lat, origin.lng, l.lat, l.lng);
   }
+  const { data: prof } = l.sellerId ? await supabaseServer().from("tm_profiles").select("verified,created_at").eq("user_id", l.sellerId).maybeSingle() : { data: null };
+  const since = prof?.created_at ? new Date(prof.created_at).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : null;
   const facts = glance(l, miles);
   const shown = new Set(facts.map((f) => f.from).filter(Boolean));
   const initials = l.seller.name.split(" ").map((w) => w[0]).join("").slice(0, 2);
@@ -97,7 +101,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
           <ContactSeller listingId={l.id} sellerId={l.sellerId ?? null} action={l.wanted ? WANTED_ACTION : cat.action} catId={cat.id} place={l.place} sold={l.sold} />
           <Link href={l.sellerId ? `/seller/${l.sellerId}` : "#contact"} className="seller seller-link" aria-label={`View ${l.seller.name}'s profile`}>
             <span className="avatar" aria-hidden="true">{initials}</span>
-            <div className="sellername"><strong>{l.seller.name}</strong><span className="muted"> · {l.seller.meta}</span></div>
+            <div className="sellername"><strong>{l.seller.name}</strong><span className="muted"> · {l.seller.meta}</span>{(prof?.verified || since) && <div className="sellertrust">{prof?.verified && <VerifiedBadge size="sm" />}{since && <span className="muted">Member since {since}</span>}</div>}</div>
             <Icon name="chev" size={16} />
           </Link>
         </aside>

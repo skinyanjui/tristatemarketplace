@@ -590,3 +590,4 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
 .ssrun { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 12px; background: var(--surface); box-shadow: 0 0 0 1px var(--ring-soft); font-size: var(--fs-ui); font-weight: 500; color: var(--label); }
 .ssrun span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card.ad .card-row { justify-content: flex-end; }
+.sellertrust { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 2px; font-size: var(--fs-sm); }
