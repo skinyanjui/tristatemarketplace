@@ -717,3 +717,13 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
 /* Scrolling rows move sideways only. */
 .towns, .chips, .toolbar > .filters { overflow-y: hidden; overscroll-behavior: contain auto; }
 .towns { padding: 1px 0; }
+
+/* Results bar sizing: every control is 34px tall; the toggle's touch area extends past its box like the chips'. */
+.toolbar .vswitch { min-height: 34px; padding: 0 2px; }
+.toolbar .switch { position: relative; }
+.toolbar .switch::after { content: ""; position: absolute; inset: -8px -4px; }
+.toolbar > .filters { padding: 0; }
+/* Big screens: a small dot separates the towns scroller from the filters. */
+@media (min-width: 1101px) {
+  .toolbar > .filters::before { content: ""; flex: none; width: 4px; height: 4px; border-radius: 50%; background: color-mix(in srgb, var(--label) 35%, var(--surface)); margin-right: 4px; }
+}
