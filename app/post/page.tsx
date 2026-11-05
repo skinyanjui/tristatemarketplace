@@ -1,5 +1,6 @@
 "use client";
 
+import { localToday } from "@/lib/dates";
 import { TOWNS, townFor } from "@/lib/places";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -28,6 +29,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
   const [error, setError] = useState("");
   const [cat, setCat] = useState("sale");
   const [picked, setPicked] = useState(0);
+  const [known, setKnown] = useState(true);
   const f = FIELDS[cat] ?? DEFAULT;
 
   return (
@@ -38,15 +40,21 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
         const fd = new FormData(e.currentTarget);
         setBusy(true);
         setError("");
+        const paths: string[] = [];
         try {
           const sb = supabaseBrowser();
           const photos: string[] = [];
-          for (const file of Array.from(files.current?.files ?? []).slice(0, 8)) {
+          const chosen = Array.from(files.current?.files ?? []);
+          if (chosen.length > 8) throw new Error("Please pick up to 8 photos.");
+          if (String(fd.get("title") ?? "").trim().length < 3) throw new Error("Give your listing a title of at least 3 characters.");
+          for (const file of chosen) {
+            if (!/^image\/(jpeg|png|webp|heic|heif)$/.test(file.type)) throw new Error(`${file.name} is not a supported photo. Please use JPG, PNG, WebP or HEIC.`);
             if (file.size > 8 * 1024 * 1024) throw new Error(`${file.name} is a bit too big (8 MB max).`);
             const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
             const path = `${uid}/${crypto.randomUUID()}.${ext}`;
             const up = await sb.storage.from("tm-listing-photos").upload(path, file, { contentType: file.type });
             if (up.error) throw up.error;
+            paths.push(path);
             photos.push(sb.storage.from("tm-listing-photos").getPublicUrl(path).data.publicUrl);
           }
           const raw = String(fd.get("price") ?? "").trim();
@@ -59,6 +67,8 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
           if (err) throw err;
           router.push(`/listing/${data.id}`);
         } catch (err) {
+          // Do not leave uploaded photos behind when the post did not go through.
+          if (paths.length) await supabaseBrowser().storage.from("tm-listing-photos").remove(paths);
           const m = (err as { message?: string } | null)?.message ?? "";
           setError(m.includes("price_text_check") ? "Price should be a number, like 120, or the word Free." : m.includes("photos_check") ? "One of those photos could not be used. Please try uploading again." : m || "Oops, something went wrong. Please try again.");
           setBusy(false);
@@ -88,12 +98,12 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
       <section style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <div className="field">
           <label htmlFor="title">Title</label>
-          <input id="title" name="title" className="input" required placeholder={`${categoryOf(cat).label}: what it is and the key detail`} />
+          <input id="title" name="title" maxLength={140} className="input" required placeholder={`${categoryOf(cat).label}: what it is and the key detail`} />
         </div>
         <div className="row">
           <div className="field">
             <label htmlFor="price">{f.price}</label>
-            <input id="price" name="price" className="input" inputMode="decimal" placeholder={f.priceHint} />
+            <input id="price" name="price" maxLength={40} className="input" inputMode="decimal" placeholder={f.priceHint} />
           </div>
           <div className="field" style={{ flex: "0 1 auto" }}>
             <label htmlFor="cond">{f.cond}</label>
@@ -105,17 +115,18 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
         {(cat === "event" || cat === "sale") && (
           <div className="field">
             <label htmlFor="date">Date</label>
-            <input id="date" name="date" type="date" className="input" required min={new Date().toISOString().slice(0, 10)} />
+            <input id="date" name="date" type="date" className="input" required min={localToday()} />
           </div>
         )}
         <div className="field">
           <label htmlFor="place">Location</label>
-          <input id="place" name="place" className="input" required placeholder="Start typing a town, like Newburgh, IN" list="towns" autoComplete="off" />
+          <input id="place" name="place" maxLength={80} onChange={(e) => setKnown(!e.target.value || !!townFor(e.target.value))} className="input" required placeholder="Start typing a town, like Newburgh, IN" list="towns" autoComplete="off" />
+          {!known && <small className="muted">We cannot measure distance for that town yet, so it will not show up in Distance searches.</small>}
           <datalist id="towns">{TOWNS.map((t) => <option key={t.id} value={t.name} />)}</datalist>
         </div>
         <div className="field">
           <label htmlFor="desc">Description</label>
-          <textarea id="desc" name="desc" className="input" rows={5} placeholder="Tell buyers what makes this worth a look" />
+          <textarea id="desc" name="desc" maxLength={4000} className="input" rows={5} placeholder="Tell buyers what makes this worth a look" />
         </div>
       </section>
 

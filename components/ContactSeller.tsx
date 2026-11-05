@@ -16,7 +16,9 @@ export function ContactSeller({ listingId, sellerId, label, sold }: { listingId:
 
   return (
     <AuthGate next={`/listing/${listingId}`} note="Sign in with your email so the seller can reply. No password to remember!">
-      {(s) => (
+      {(s) => s.user.id === sellerId ? (
+        <div className="notice">This is your own listing, so there is nobody to message. Manage it from Account.</div>
+      ) : (
         <form
           style={{ display: "flex", flexDirection: "column", gap: 12 }}
           onSubmit={async (e) => {
@@ -24,7 +26,7 @@ export function ContactSeller({ listingId, sellerId, label, sold }: { listingId:
             setState("sending"); setErr("");
             const body = String(new FormData(e.currentTarget).get("body") ?? "").trim();
             const { error } = await supabaseBrowser().from("tm_messages").insert({ listing_id: listingId, seller_id: sellerId, sender_email: s.user.email, body });
-            if (error) { setErr(error.message); setState("idle"); } else setState("sent");
+            if (error) { setErr(error.code === "42501" ? "This listing is no longer taking messages. It may have sold or expired." : error.message); setState("idle"); } else setState("sent");
           }}
         >
           <div className="field">

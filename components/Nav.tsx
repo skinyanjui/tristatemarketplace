@@ -24,6 +24,7 @@ export function Nav() {
       if (next.cat !== "all") sp.set("cat", next.cat);
       else sp.delete("cat");
     }
+    sp.delete("page");
     const qs = sp.toString();
     router.replace(qs ? `/?${qs}` : "/", { scroll: false });
   }

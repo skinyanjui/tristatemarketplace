@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Filters } from "@/components/Filters";
 import { ListingCard } from "@/components/ListingCard";
@@ -17,6 +18,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const pageNum = typeof sp.page === "string" ? Number(sp.page) || 1 : 1;
   const { items: listings, total, page, pages } = await getListings({ q, cat, min: num("min"), max: num("max"), sort, page: pageNum, near, within });
   const hrefFor = (n: number) => { const u = new URLSearchParams(); for (const [k, v] of Object.entries(sp)) if (typeof v === "string" && k !== "page") u.set(k, v); if (n > 1) u.set("page", String(n)); const qs = u.toString(); return qs ? `/?${qs}` : "/"; };
+  if (page > 1 && listings.length === 0) redirect(hrefFor(Math.max(1, pages)));
   const catLabel = cat !== "all" ? CATEGORY_BY_ID[cat]?.label : null;
 
   return (

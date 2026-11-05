@@ -49,6 +49,7 @@ export function Filters() {
       if (v && !(k === "sort" && v === fallback)) sp.set(k, v);
       else sp.delete(k);
     }
+    sp.delete("page");
     const qs = sp.toString();
     router.replace(qs ? `/?${qs}` : "/", { scroll: false });
   }

@@ -21,9 +21,13 @@ export function SavedList({ all }: { all: Listing[] }) {
   const ids = new Set(JSON.parse(raw) as string[]);
   const saved = all.filter((l) => ids.has(l.id));
   if (!saved.length) return <div className="notice">Nothing saved yet. Tap the heart on anything you like and it will wait for you here.</div>;
+  const gone = ids.size - saved.length;
   return (
-    <div className="grid">
-      {saved.map((l) => <ListingCard key={l.id} listing={l} />)}
-    </div>
+    <>
+      {gone > 0 && <div className="notice" style={{ marginBottom: 12 }}>{gone} saved {gone === 1 ? "listing is" : "listings are"} no longer available (sold, expired or removed).</div>}
+      <div className="grid">
+        {saved.map((l) => <ListingCard key={l.id} listing={l} />)}
+      </div>
+    </>
   );
 }

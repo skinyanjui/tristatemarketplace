@@ -7,7 +7,7 @@ import { ReportsReview } from "./ReportsReview";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { categoryOf } from "@/lib/categories";
 
-type Mine = { id: string; title: string; kind: string; price: string; status: string; featured_until: string | null; expires_at: string };
+type Mine = { id: string; title: string; kind: string; price: string; status: string; featured_until: string | null; expires_at: string; photos: string[] | null };
 
 const daysLeft = (iso: string) => Math.max(0, Math.ceil((new Date(iso).getTime() - Date.now()) / 86_400_000));
 
@@ -15,12 +15,13 @@ function Mine({ uid }: { uid: string }) {
   const [rows, setRows] = useState<Mine[] | null>(null);
   const [err, setErr] = useState("");
   const load = () =>
-    supabaseBrowser().from("tm_listings").select("id,title,kind,price,status,featured_until,expires_at").eq("seller_id", uid).order("created_at", { ascending: false })
+    supabaseBrowser().from("tm_listings").select("id,title,kind,price,status,featured_until,expires_at,photos").eq("seller_id", uid).order("created_at", { ascending: false })
       .then(({ data, error }) => (error ? setErr(error.message) : setRows(data as Mine[])));
   useEffect(() => { load(); }, [uid]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function setStatus(id: string, status: string) {
-    await supabaseBrowser().from("tm_listings").update({ status }).eq("id", id);
+    const { error } = await supabaseBrowser().from("tm_listings").update({ status }).eq("id", id);
+    setNote(error ? "That did not go through. Please try again." : status === "sold" ? "Marked as sold. Nice work!" : "Your listing is back on the site.");
     load();
   }
   const [note, setNote] = useState("");
@@ -39,8 +40,19 @@ function Mine({ uid }: { uid: string }) {
     setNote(error ? error.message : "Renewed for 60 more days.");
     load();
   }
+  const [confirming, setConfirming] = useState<string | null>(null);
   async function remove(id: string) {
-    await supabaseBrowser().from("tm_listings").delete().eq("id", id);
+    if (confirming !== id) { setConfirming(id); return; }
+    setConfirming(null);
+    const sb = supabaseBrowser();
+    const row = rows?.find((r) => r.id === id);
+    const { error } = await sb.from("tm_listings").delete().eq("id", id);
+    if (error) { setNote("Could not delete that listing. Please try again."); return; }
+    // Clean up this member's uploaded photos so storage does not fill with orphans.
+    const marker = "/tm-listing-photos/";
+    const own = (row?.photos ?? []).filter((u) => u.includes(marker)).map((u) => decodeURIComponent(u.split(marker)[1]));
+    if (own.length) await sb.storage.from("tm-listing-photos").remove(own);
+    setNote("Listing deleted.");
     load();
   }
 
@@ -63,7 +75,7 @@ function Mine({ uid }: { uid: string }) {
           {r.status === "removed" && <span className="muted">Removed by moderators</span>}
           {r.status === "active" && <button className="btn" onClick={() => feature(r.id)}>{r.featured_until && new Date(r.featured_until) > new Date() ? "Extend" : "Feature"}</button>}
           {r.status !== "removed" && <button className="btn" onClick={() => setStatus(r.id, r.status === "active" ? "sold" : "active")}>{r.status === "active" ? "Mark sold" : "Relist"}</button>}
-          <button className="btn" onClick={() => remove(r.id)}>Delete</button>
+          <button className="btn" onClick={() => remove(r.id)} onBlur={() => setConfirming(null)}>{confirming === r.id ? "Tap again to delete" : "Delete"}</button>
         </li>
       ))}
     </ul>

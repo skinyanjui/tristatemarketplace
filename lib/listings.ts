@@ -1,4 +1,6 @@
 import { TOWN_BY_ID } from "./places";
+import { connection } from "next/server";
+import { localToday } from "./dates";
 import { supabaseServer } from "./supabase/client";
 import type { Listing } from "./types";
 
@@ -45,7 +47,7 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
     nearIds = (data as string[]).length ? (data as string[]) : ["-"];
   }
   const q = (opts.q ?? "").trim().replace(/[%,()*"\\]/g, " ");
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localToday();
   // Same filters for the featured strip and the main list.
   const base = (count: boolean) => {
     let query = sb.from("tm_listings").select(COLUMNS, count ? { count: "exact" } : undefined).in("status", ["active", "sold"]);
@@ -80,7 +82,8 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
 }
 
 export async function getAllListings(): Promise<Listing[]> {
-  const { data, error } = await supabaseServer().from("tm_listings").select(COLUMNS).in("status", ["active", "sold"]).order("created_at", { ascending: false }).limit(500);
+  await connection(); // depends on today's date, so render at request time
+  const { data, error } = await supabaseServer().from("tm_listings").select(COLUMNS).in("status", ["active", "sold"]).or(`event_date.is.null,event_date.gte.${localToday()}`).order("created_at", { ascending: false }).limit(500);
   if (error) throw new Error(`Could not load listings: ${error.message}`);
   return (data as Row[]).map(fromRow);
 }
