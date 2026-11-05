@@ -42,7 +42,7 @@ export function Nav() {
         </Link>
         <form className="search" role="search" onSubmit={(e) => e.preventDefault()}>
           <Icon name="search" />
-          <input type="search" aria-label="Search listings" placeholder="Search listings" defaultValue={params.get("q") ?? ""} onChange={(e) => onSearch(e.target.value)} />
+          <input type="search" aria-label="Search listings" placeholder="Search Tristate Market" defaultValue={params.get("q") ?? ""} onChange={(e) => onSearch(e.target.value)} />
         </form>
         <div className="nav-actions">
           <Link href="/account" className="nav-link">Sign in</Link>

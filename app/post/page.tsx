@@ -41,7 +41,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
           const sb = supabaseBrowser();
           const photos: string[] = [];
           for (const file of Array.from(files.current?.files ?? []).slice(0, 8)) {
-            if (file.size > 8 * 1024 * 1024) throw new Error(`${file.name} is over 8 MB.`);
+            if (file.size > 8 * 1024 * 1024) throw new Error(`${file.name} is a bit too big (8 MB max).`);
             const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
             const path = `${uid}/${crypto.randomUUID()}.${ext}`;
             const up = await sb.storage.from("tm-listing-photos").upload(path, file, { contentType: file.type });
@@ -58,7 +58,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
           if (err) throw err;
           router.push(`/listing/${data.id}`);
         } catch (err) {
-          setError(err instanceof Error ? err.message : "Something went wrong. Try again.");
+          setError(err instanceof Error ? err.message : "Oops, something went wrong. Please try again.");
           setBusy(false);
         }
       }}
@@ -120,7 +120,7 @@ export default function PostPage() {
   return (
     <main className="form">
       <h1>Post a listing</h1>
-      <AuthGate next="/post" title="Sign in to post a listing" note="We will email you a sign-in link. No password needed.">
+      <AuthGate next="/post" title="Sign in to post a listing" note="We will email you a link, so there is no password to remember.">
         {(s) => <PostForm uid={s.user.id} email={s.user.email ?? "neighbor"} />}
       </AuthGate>
     </main>

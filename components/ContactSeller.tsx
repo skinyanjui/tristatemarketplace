@@ -9,13 +9,13 @@ export function ContactSeller({ listingId, sellerId, label, sold }: { listingId:
   const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
   const [err, setErr] = useState("");
 
-  if (sold) return <div className="notice">This item has been sold.</div>;
-  if (!sellerId) return <div className="notice">This is a sample listing, so there is no seller to contact.</div>;
+  if (sold) return <div className="notice">Good news for someone else: this one has been sold.</div>;
+  if (!sellerId) return <div className="notice">This is a sample listing, so there is nobody to message here.</div>;
   if (!open) return <button className="btn btn-lg" onClick={() => setOpen(true)}>{label}</button>;
-  if (state === "sent") return <div className="notice" role="status">Sent. The seller will see your message in their account and can reply to your email.</div>;
+  if (state === "sent") return <div className="notice" role="status">Message sent! The seller will see your message in their account and can reply to your email.</div>;
 
   return (
-    <AuthGate next={`/listing/${listingId}`} note="Sign in with your email so the seller can reply. No password needed.">
+    <AuthGate next={`/listing/${listingId}`} note="Sign in with your email so the seller can reply. No password to remember!">
       {(s) => (
         <form
           style={{ display: "flex", flexDirection: "column", gap: 12 }}

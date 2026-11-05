@@ -26,7 +26,7 @@ export function fromRow(r: Row): Listing {
   };
 }
 
-export type Sort = "new" | "low" | "high";
+export type Sort = "new" | "old" | "low" | "high" | "az" | "za";
 export const PAGE_SIZE = 48;
 
 export type Opts = { q?: string; cat?: string; min?: number; max?: number; sort?: Sort; page?: number };
@@ -43,7 +43,8 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
   if (opts.max !== undefined) query = query.lte("price_value", opts.max);
   query = query.order("status", { ascending: true });
   if (opts.sort === "low" || opts.sort === "high") query = query.order("price_value", { ascending: opts.sort === "low", nullsFirst: false });
-  query = query.order("created_at", { ascending: false }).range(from, from + PAGE_SIZE - 1);
+  if (opts.sort === "az" || opts.sort === "za") query = query.order("title", { ascending: opts.sort === "az" });
+  query = query.order("created_at", { ascending: opts.sort === "old" }).range(from, from + PAGE_SIZE - 1);
   const { data, error, count } = await query;
   if (error) throw new Error(`Could not load listings: ${error.message}`);
   const total = count ?? 0;

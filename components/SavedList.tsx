@@ -20,7 +20,7 @@ export function SavedList({ all }: { all: Listing[] }) {
   const raw = useSyncExternalStore(subscribe, read, () => "[]");
   const ids = new Set(JSON.parse(raw) as string[]);
   const saved = all.filter((l) => ids.has(l.id));
-  if (!saved.length) return <div className="notice">Nothing saved yet. Tap the heart on a listing to keep it here.</div>;
+  if (!saved.length) return <div className="notice">Nothing saved yet. Tap the heart on anything you like and it will wait for you here.</div>;
   return (
     <div className="grid">
       {saved.map((l) => <ListingCard key={l.id} listing={l} />)}

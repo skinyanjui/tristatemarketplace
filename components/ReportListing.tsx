@@ -10,7 +10,7 @@ export function ReportListing({ listingId }: { listingId: string }) {
   const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
   const [err, setErr] = useState("");
 
-  if (state === "sent") return <div className="notice" role="status">Thanks. We will review this listing.</div>;
+  if (state === "sent") return <div className="notice" role="status">Thanks for looking out for the community. We will review this listing.</div>;
   if (!open) return <button type="button" className="linkbtn" onClick={() => setOpen(true)}>Report this listing</button>;
   return (
     <form
@@ -20,7 +20,7 @@ export function ReportListing({ listingId }: { listingId: string }) {
         setState("sending"); setErr("");
         const fd = new FormData(e.currentTarget);
         const { error } = await supabaseBrowser().from("tm_reports").insert({ listing_id: listingId, reason: fd.get("reason"), details: String(fd.get("details") ?? "").slice(0, 1000) });
-        if (error) { setErr("Could not send the report. Try again."); setState("idle"); } else setState("sent");
+        if (error) { setErr("Hmm, that did not go through. Please try again."); setState("idle"); } else setState("sent");
       }}
     >
       <div className="field">

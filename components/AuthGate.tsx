@@ -30,7 +30,7 @@ export function SignIn({ next = "/account", note, title = "Sign in" }: { next?: 
     if (error) { setState("error"); setMsg(error.message); } else setState("sent");
   }
 
-  if (state === "sent") return <div className="notice" role="status" style={{ maxWidth: 420 }}>Check {email} for a sign-in link. You can close this tab.</div>;
+  if (state === "sent") return <div className="notice" role="status" style={{ maxWidth: 420 }}>Check your inbox! We sent a sign-in link to {email}. You can close this tab.</div>;
   return (
     <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%", maxWidth: 420 }}>
       <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: "-0.01em" }}>{title}</h2>

@@ -2,6 +2,16 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { SortMenu } from "./SortMenu";
+
+const SORTS = [
+  { value: "new", label: "Newest first" },
+  { value: "old", label: "Oldest first" },
+  { value: "low", label: "Price: low to high" },
+  { value: "high", label: "Price: high to low" },
+  { value: "az", label: "Title: A to Z" },
+  { value: "za", label: "Title: Z to A" },
+];
 
 /** Price range and sort, kept in the URL. Active filters show as removable tokens. */
 export function Filters() {
@@ -29,15 +39,10 @@ export function Filters() {
   return (
     <>
       <div className="filters" style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-        <button type="button" className="chip" aria-pressed={open} aria-expanded={open} onClick={() => setOpen((o) => !o)}>Price</button>
-        <label className="sr-only" htmlFor="sort">Sort by</label>
-        <select id="sort" className="input" style={{ width: "auto" }} value={sort} onChange={(e) => set({ sort: e.target.value })}>
-          <option value="new">Newest</option>
-          <option value="low">Price: low to high</option>
-          <option value="high">Price: high to low</option>
-        </select>
+        <button type="button" className="chip" aria-pressed={open} aria-expanded={open} onClick={() => setOpen((o) => !o)}>Price range</button>
+        <SortMenu label="Sort by" options={SORTS} value={sort} onChange={(v) => set({ sort: v })} />
         {tokens.map((t) => (
-          <button key={t.label} type="button" className="chip" onClick={() => set(t.clear)} aria-label={`Remove filter: ${t.label}`}>{t.label} ✕</button>
+          <button key={t.label} type="button" className="chip" onClick={() => set(t.clear)} aria-label={`Clear: ${t.label}`}>{t.label} ✕</button>
         ))}
       </div>
       {open && (

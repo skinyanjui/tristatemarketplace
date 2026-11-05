@@ -28,7 +28,7 @@ function Mine({ uid }: { uid: string }) {
 
   if (err) return <div className="notice" role="alert">{err}</div>;
   if (!rows) return <div className="notice">Loading…</div>;
-  if (!rows.length) return <div className="notice">You have no listings yet. <Link href="/post">Post one</Link>.</div>;
+  if (!rows.length) return <div className="notice">Nothing posted yet. Ready to sell something? <Link href="/post">Post one</Link>.</div>;
   return (
     <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
       {rows.map((r) => (
@@ -54,7 +54,7 @@ function Inbox({ uid }: { uid: string }) {
       .then(({ data }) => setRows((data as Msg[]) ?? []));
   }, [uid]);
   if (!rows) return null;
-  if (!rows.length) return <div className="notice">No messages yet. Buyers who message you will show up here.</div>;
+  if (!rows.length) return <div className="notice">No messages yet. When a buyer reaches out, you will see it here.</div>;
   return (
     <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
       {rows.map((m) => (
@@ -70,7 +70,7 @@ function Inbox({ uid }: { uid: string }) {
 
 export function AccountPanel() {
   return (
-    <AuthGate title="Sign in to your account" note="Post listings and manage them. We will email you a sign-in link, no password needed.">
+    <AuthGate title="Sign in to your account" note="Post and manage your listings. We will email you a link, so there is no password to remember.">
       {(s) => (
         <section style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
