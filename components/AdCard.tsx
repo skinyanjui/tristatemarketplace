@@ -11,7 +11,7 @@ export function AdCard({ ad }: { ad: Ad }) {
           // eslint-disable-next-line @next/next/no-img-element
           ? <img src={ad.image} alt="" loading="lazy" />
           : <span className="ad-art" aria-hidden="true">{ad.advertiser.slice(0, 1)}</span>}
-        <span className="pill pill-tiny">Ad</span>
+        <span className="pill pill-tiny pill-ad-label">Ad</span>
         <span className="ad-copy">
           <small>{ad.advertiser}</small>
           <strong>{ad.headline}</strong>

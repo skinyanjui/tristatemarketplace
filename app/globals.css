@@ -619,3 +619,7 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
 .ctitle { white-space: nowrap; display: block; -webkit-line-clamp: unset; line-clamp: unset; height: 20px; overflow: hidden; text-overflow: ellipsis; }
 .card .place { flex: none; }
 .place .miles { flex: none; }
+
+/* Sponsored post = a paid listing (blue ring + blue "Sponsored" badge). Ad = third-party creative (neutral ring + dark "Ad" badge). */
+.card.ad { box-shadow: 0 0 0 1px var(--ring-soft, rgba(0,0,0,.14)), 0 1px 3px rgba(0,0,0,.08); }
+.pill-tiny.pill-ad-label { background: rgba(0,0,0,.72); color: #fff; right: 10px; top: 10px; letter-spacing: .06em; text-transform: uppercase; }
