@@ -63,8 +63,6 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
         }
       }}
     >
-      <h1>Post a listing</h1>
-
       <fieldset style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }}>
         <legend style={{ padding: 0, marginBottom: 12, fontSize: 17, fontWeight: 600 }}>What are you posting?</legend>
         <div className="tiles">
@@ -121,6 +119,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
 export default function PostPage() {
   return (
     <main className="form">
+      <h1>Post a listing</h1>
       <AuthGate next="/post" title="Sign in to post a listing" note="We will email you a sign-in link. No password needed.">
         {(s) => <PostForm uid={s.user.id} email={s.user.email ?? "neighbor"} />}
       </AuthGate>

@@ -27,7 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </Suspense>
         {children}
         <Footer />
-        <Suspense fallback={<div className="tabbar" style={{ height: 49 }} />}>
+        <Suspense fallback={null}>
           <TabBar />
         </Suspense>
       </body>

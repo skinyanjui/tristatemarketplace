@@ -15,6 +15,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
   return (
     <main className="wrap">
+      <h1 className="sr-only">Tristate Market listings</h1>
       <div className="count" aria-live="polite">
         {listings.length} {listings.length === 1 ? "listing" : "listings"}
         {catLabel ? ` in ${catLabel}` : ""}
