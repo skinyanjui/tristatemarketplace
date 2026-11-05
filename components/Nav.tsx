@@ -90,6 +90,7 @@ export function Nav() {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cat = params.get("cat") ?? "all";
   const onHome = pathname === "/";
+  const wanted = params.get("wanted") === "1";
   const extra = cat !== "all" && !FEATURED_IDS.includes(cat) ? CATEGORY_BY_ID[cat] : undefined;
 
   const chipsEl = useRef<HTMLDivElement>(null);
@@ -100,7 +101,7 @@ export function Nav() {
     if (on.offsetLeft < box.scrollLeft || on.offsetLeft + on.offsetWidth > box.scrollLeft + box.clientWidth) box.scrollTo({ left: on.offsetLeft < 160 ? 0 : on.offsetLeft - 8, behavior: "smooth" });
   }, [cat, onHome]);
 
-  function go(next: { q?: string; cat?: string }) {
+  function go(next: { q?: string; cat?: string; wanted?: boolean }) {
     const sp = new URLSearchParams(params.toString());
     if (next.q !== undefined) {
       if (next.q) sp.set("q", next.q);
@@ -109,6 +110,10 @@ export function Nav() {
     if (next.cat !== undefined) {
       if (next.cat !== "all") sp.set("cat", next.cat);
       else sp.delete("cat");
+    }
+    if (next.wanted !== undefined) {
+      if (next.wanted) sp.set("wanted", "1");
+      else sp.delete("wanted");
     }
     sp.delete("page");
     const qs = sp.toString();
@@ -140,7 +145,8 @@ export function Nav() {
       {onHome && (
         <div className="chiprow">
           <div ref={chipsEl} className="chips" role="group" aria-label="Filter by category">
-            <button type="button" className="chip" aria-pressed={cat === "all"} onClick={() => go({ cat: "all" })}>All</button>
+            <button type="button" className="chip" aria-pressed={cat === "all" && !wanted} onClick={() => go({ cat: "all", wanted: false })}>All</button>
+            <button type="button" className="chip" aria-pressed={wanted} onClick={() => go({ wanted: !wanted })}>Wanted</button>
             {extra && (
               <button type="button" className="chip" aria-pressed="true" onClick={() => go({ cat: extra.id })}>{extra.label}</button>
             )}

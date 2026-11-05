@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SortMenu } from "./SortMenu";
-import { SaveSearch } from "./SaveSearch";
 import { RADII, TOWNS, TOWN_BY_ID } from "@/lib/places";
 
 const SORTS = [
@@ -66,7 +65,6 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
     router.replace(qs ? `/?${qs}` : "/", { scroll: false });
   }
 
-  const wanted = params.get("wanted") === "1";
   const verified = params.get("verified") === "1";
   const town = params.get("town") ?? "";
   const tokens: { label: string; clear: Record<string, string> }[] = [];
@@ -137,7 +135,6 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
             </form>
           )}
         </div>
-        <button type="button" className="chip" aria-pressed={wanted} onClick={() => set({ wanted: wanted ? "" : "1" })}>Wanted</button>
         <span className="vswitch">
           <span id="vsw-l">Verified</span>
           <button type="button" role="switch" aria-checked={verified} aria-labelledby="vsw-l" className="switch" onClick={() => set({ verified: verified ? "" : "1" })}><i /></button>
@@ -146,7 +143,6 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
         {tokens.map((t) => (
           <button key={t.label} type="button" className="chip" onClick={() => set(t.clear)} aria-label={`Clear: ${t.label}`}>{t.label} ✕</button>
         ))}
-        <SaveSearch />
       </div>
     </>
   );
