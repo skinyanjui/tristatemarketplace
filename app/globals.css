@@ -388,3 +388,4 @@ body { font-size: var(--fs-body); }
 .reportrow { width: 100%; display: flex; justify-content: center; }
 .reportrow .linkbtn { text-align: center; color: var(--label2); text-decoration: underline; text-underline-offset: 2px; }
 @container (max-width: 160px) { .price { font-size: 14px; } }
+.notice a:not([class]) { text-decoration: underline; text-underline-offset: 2px; }
