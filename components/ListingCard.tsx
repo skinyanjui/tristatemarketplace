@@ -3,7 +3,7 @@ import { categoryOf, mapsUrl, WANTED_ACTION } from "@/lib/categories";
 import type { Listing } from "@/lib/types";
 import { Icon } from "./Icon";
 import { ListingImage } from "./ListingArt";
-import { keyFact, milesLabel } from "@/lib/keyfact";
+import { milesLabel } from "@/lib/keyfact";
 import { SaveButton } from "./SaveButton";
 
 /** "Sat, Nov 7" from a YYYY-MM-DD date, ignoring the viewer's time zone. */
@@ -37,10 +37,6 @@ export function ListingCard({ listing }: { listing: Listing }) {
       <div className="card-body">
         <Link href={href} className="card-link" aria-hidden="true" tabIndex={-1} />
         <h2 className="ctitle">{listing.title}</h2>
-        <p className="cfact">
-          {dateInRow && listing.eventDate && <b>{niceDate(listing.eventDate)} · </b>}
-          {keyFact(listing)}
-        </p>
         <div className="card-row">
           <span className="price">{listing.price.replace(/\s*–\s*/g, "–").replace(/\s*\/\s*/g, "/")}</span>
           {listing.sold ? (
@@ -57,6 +53,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
         </div>
         <div className="place">
           <Icon name="pin" size={13} />
+          {dateInRow && listing.eventDate && <span className="miles"><b>{niceDate(listing.eventDate)}</b> · </span>}
           <span>{listing.place ? listing.place.split(",")[0] : "Location not set"}</span>
           {milesLabel(listing.miles) && <span className="miles"> · {milesLabel(listing.miles)}</span>}
         </div>
