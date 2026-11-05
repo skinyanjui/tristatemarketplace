@@ -39,8 +39,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
         <h2 className="ctitle">{listing.title}</h2>
         <p className="cfact">
           {dateInRow && listing.eventDate && <b>{niceDate(listing.eventDate)} · </b>}
-          {[keyFact(listing), listing.place ? listing.place.split(",")[0] : "Location not set"].filter(Boolean).join(" · ")}
-          {milesLabel(listing.miles) && ` · ${milesLabel(listing.miles)}`}
+          {keyFact(listing)}
         </p>
         <div className="card-row">
           <span className="price">{listing.price.replace(/\s*–\s*/g, "–").replace(/\s*\/\s*/g, "/")}</span>
@@ -55,6 +54,11 @@ export function ListingCard({ listing }: { listing: Listing }) {
               <span><Icon name={action.icon} size={16} color="#fff" /><i className="lg">{action.short}</i><i className="sm">{action.tiny ?? action.short}</i></span>
             </Link>
           )}
+        </div>
+        <div className="place">
+          <Icon name="pin" size={13} />
+          <span>{listing.place ? listing.place.split(",")[0] : "Location not set"}</span>
+          {milesLabel(listing.miles) && <span className="miles"> · {milesLabel(listing.miles)}</span>}
         </div>
       </div>
     </article>
