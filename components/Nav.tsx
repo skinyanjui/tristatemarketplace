@@ -37,7 +37,7 @@ export function Nav() {
     <header className="nav-wrap">
       <div className="nav">
         <Link href="/" className="brand" aria-label="Tristate Market home">
-          <span className="brand-mark"><Icon name="tag" size={16} color="#fff" /></span>
+          <span className="brand-mark"><Icon name="pin" size={16} color="#fff" /></span>
           <span className="brand-text">Tristate Market</span>
         </Link>
         <form className="search" role="search" onSubmit={(e) => e.preventDefault()}>

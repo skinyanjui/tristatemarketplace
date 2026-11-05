@@ -5,6 +5,7 @@ import { TabBar } from "@/components/TabBar";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://tristatemarketplace.vercel.app"),
   title: { default: "Tristate Market", template: "%s | Tristate Market" },
   description: "Local classifieds for the Evansville tristate: cars, real estate, land, livestock, garage sales, events and more.",
 };

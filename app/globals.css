@@ -202,5 +202,3 @@ textarea.input { height: auto; padding: 12px; line-height: 24px; resize: vertica
 .skel-card { aspect-ratio: 3 / 4; }
 @keyframes skel { 50% { opacity: 0.55; } }
 @media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
-.tip { display: flex; gap: 12px; align-items: center; background: var(--surface); border-radius: 12px; padding: 12px 14px; box-shadow: 0 0 0 1px var(--accent); font-size: 14px; color: var(--label); margin: 0 0 12px; }
-.tip-x { min-height: 44px; min-width: 44px; background: none; border: 0; color: var(--accent); font: inherit; font-weight: 600; cursor: pointer; }

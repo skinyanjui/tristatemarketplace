@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Tip } from "@/components/Tip";
 import { AuthGate } from "@/components/AuthGate";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { CATEGORIES, categoryOf } from "@/lib/categories";
@@ -80,7 +79,6 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
 
       <section className="field">
         <span className="lbl" style={{ fontSize: 17, fontWeight: 600 }}>Photos</span>
-        <Tip id="photos">Listings with a clear first photo get the most looks. No photo? We show an illustration for your category.</Tip>
         <label className="notice" style={{ cursor: "pointer", textAlign: "center", padding: 28 }}>
           <input ref={files} type="file" accept="image/*" multiple className="sr-only" onChange={(e) => setPicked(e.target.files?.length ?? 0)} />
           {picked ? `${picked} photo${picked > 1 ? "s" : ""} selected. The first one is shown on your card.` : "Add photos (up to 8). The first one is shown on your card."}
