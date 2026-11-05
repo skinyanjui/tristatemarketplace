@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContactSeller } from "@/components/ContactSeller";
 import { Icon } from "@/components/Icon";
-import { ListingImage } from "@/components/ListingArt";
+import { Gallery } from "@/components/Gallery";
+import { artFor } from "@/components/ListingArt";
 import { SaveButton } from "@/components/SaveButton";
 import { categoryOf } from "@/lib/categories";
 import { getListing } from "@/lib/listings";
@@ -26,10 +27,9 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
       <Link href="/" className="back"><Icon name="back" size={18} />All listings</Link>
       <div className="dgrid">
         <div style={{ display: "flex", flexDirection: "column", gap: 24, minWidth: 0 }}>
-          <div className="hero">
-            <ListingImage listing={l} />
+          <Gallery photos={l.photos ?? []} fallback={artFor(l)} title={l.title}>
             <SaveButton id={l.id} title={l.title} />
-          </div>
+          </Gallery>
           <div className="section">
             <span className="pill" style={{ position: "static", background: cat.color, color: "#fff" }}>{cat.label}</span>
             <h1 className="dtitle">{l.title}</h1>
