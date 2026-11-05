@@ -37,7 +37,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Backend
 
-Listings, sign-in and photos use Supabase (tables prefixed `tm_`, applied from `supabase/migrations/0001_init.sql`).
+Listings, sign-in and photos use Supabase (tables prefixed `tm_`, applied in order from `supabase/migrations/` (0001 to 0010)).
 Sign-in is an emailed magic link; add `https://tristatemarketplace.vercel.app/**` (and `http://localhost:3000/**`) to Supabase Auth > URL Configuration > Redirect URLs.
 Optional env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (public defaults are built in).
 Remove the demo listings with `delete from public.tm_listings where is_demo;`.
+
+Features: category browsing, search, price filter and sort (database-side via `price_value`), 48-per-page paging, photo gallery, save, buyer-seller messaging, reporting with moderator review (`tm_admins`), Sold badge (owners mark listings sold from Account), and a Share button.
