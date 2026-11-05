@@ -20,7 +20,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
       <div className="card-body">
         <Link href={href} className="card-link" aria-hidden="true" tabIndex={-1} />
         <div className="card-row">
-          <span className="price">{listing.price}</span>
+          <span className="price">{listing.price.replace(/\s*–\s*/g, "–").replace(/\s*\/\s*/g, "/")}</span>
           <Link href={`${href}#contact`} className="act" aria-label={`${cat.action.label}: ${listing.title}`}>
             <span><Icon name={cat.action.icon} size={18} color="#fff" /></span>
           </Link>

@@ -99,11 +99,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 /* ---------- Listing card ---------- */
 .card {
-  position: relative; width: 100%; display: grid; grid-template-rows: minmax(0, 66fr) minmax(0, 34fr); aspect-ratio: 3 / 4;
+  position: relative; width: 100%; display: flex; flex-direction: column;
   background: var(--surface); border-radius: 16px; overflow: hidden;
   box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.05), 0 6px 20px rgba(0,0,0,0.05);
 }
-.card-photo { position: relative; min-height: 0; overflow: hidden; background: var(--fill); }
+.card-photo { position: relative; flex: none; aspect-ratio: 8 / 7; overflow: hidden; background: var(--fill); }
 .card-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .card-link { position: absolute; inset: 0; }
 .pill {
@@ -114,11 +114,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .pill-kind { bottom: 12px; left: 12px; color: #fff; }
 .save { position: absolute; top: 2px; right: 6px; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; display: grid; place-items: center; }
 .save span { width: 32px; height: 32px; border-radius: 9999px; background: var(--glass); box-shadow: 0 0 0 1px var(--ring-soft); display: grid; place-items: center; }
-.card-body { position: relative; padding: 8px 12px 10px; display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 0; }
-.card-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 36px; }
-.price { display: inline-flex; align-items: center; min-height: 44px; margin: -8px 0; font-size: 20px; line-height: 28px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.act { position: relative; z-index: 1; flex: none; width: 44px; height: 44px; margin: -4px -4px -4px 0; display: grid; place-items: center; }
-.act span { width: 36px; height: 36px; border-radius: 9999px; background: var(--accent); display: grid; place-items: center; }
+.card-body { position: relative; padding: 10px 12px; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+.card-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 40px; }
+.price { display: inline-flex; align-items: center; min-height: 44px; margin: -2px 0; font-size: 20px; line-height: 28px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.act { position: relative; z-index: 1; flex: none; width: 44px; height: 44px; margin: -2px -4px -2px 0; display: grid; place-items: center; }
+.act span { width: 32px; height: 32px; border-radius: 9999px; background: var(--accent); display: grid; place-items: center; }
 .place { display: flex; align-items: center; gap: 4px; font-size: 13px; line-height: 18px; color: var(--label2); min-width: 0; }
 .place span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -199,7 +199,7 @@ textarea.input { height: auto; padding: 12px; line-height: 24px; resize: vertica
 
 /* ---------- Skeletons ---------- */
 .skel { background: var(--fill); border-radius: 16px; animation: skel 1.2s ease-in-out infinite; }
-.skel-card { aspect-ratio: 3 / 4; }
+.skel-card { height: 0; padding-top: calc(87.5% + 80px); }
 @keyframes skel { 50% { opacity: 0.55; } }
 @media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
 .gal-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(0,0,0,0.65); color: #fff; font-size: 26px; line-height: 1; cursor: pointer; }
@@ -218,3 +218,6 @@ textarea.input { height: auto; padding: 12px; line-height: 24px; resize: vertica
 @media (max-width: 719px) { .foot { padding-bottom: 88px; } }
 
 #sort { height: 36px; font-size: 13px; font-weight: 500; border-radius: 9999px; padding: 0 12px; }
+.filters .chip { height: 36px; }
+@media (max-width: 420px) { .price { font-size: 18px; } }
+@media (max-width: 370px) { .price { font-size: 16px; } }

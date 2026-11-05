@@ -28,7 +28,7 @@ export function Filters() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+      <div className="filters" style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
         <button type="button" className="chip" aria-pressed={open} aria-expanded={open} onClick={() => setOpen((o) => !o)}>Price</button>
         <label className="sr-only" htmlFor="sort">Sort by</label>
         <select id="sort" className="input" style={{ width: "auto" }} value={sort} onChange={(e) => set({ sort: e.target.value })}>
