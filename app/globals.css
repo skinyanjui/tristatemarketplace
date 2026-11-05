@@ -117,12 +117,14 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .pill-count { bottom: 10px; right: 10px; background: rgba(0, 0, 0, 0.6); color: #fff; padding: 0 8px; }
 .save { position: absolute; top: 2px; right: 6px; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; display: grid; place-items: center; }
 .save span { width: 32px; height: 32px; border-radius: 9999px; background: var(--glass); box-shadow: 0 0 0 1px var(--ring-soft); display: grid; place-items: center; }
-.card-body { position: relative; padding: 10px 12px; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
-.card-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 40px; }
+.card-body { position: relative; height: 106px; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 0; }
+.card-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 41px; margin-top: 4px; border-top: 1px solid var(--sep); }
 .price { display: inline-flex; align-items: center; min-height: 44px; margin: -2px 0; font-size: 20px; line-height: 28px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .act { position: relative; z-index: 1; flex: none; width: 44px; height: 44px; margin: -2px -4px -2px 0; display: grid; place-items: center; }
 .act span { width: 32px; height: 32px; border-radius: 9999px; background: var(--accent-fill); display: grid; place-items: center; }
-.place { display: flex; align-items: center; gap: 4px; font-size: 13px; line-height: 18px; color: var(--label2); min-width: 0; }
+.place { display: flex; align-items: center; gap: 4px; font-size: 12.5px; line-height: 18px; color: var(--label2); min-width: 0; margin-top: 2px; }
+.place svg { flex: none; opacity: 0.7; }
+.place b { font-weight: 600; color: var(--label); }
 .place span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ---------- Tab bar (phones) ---------- */
@@ -207,7 +209,7 @@ textarea.input { height: auto; padding: 12px; line-height: 24px; resize: vertica
 
 /* ---------- Skeletons ---------- */
 .skel { background: var(--fill); border-radius: 16px; animation: skel 1.2s ease-in-out infinite; }
-.skel-card { height: 0; padding-top: calc(87.5% + 102px); }
+.skel-card { height: 0; padding-top: calc(87.5% + 106px); }
 @keyframes skel { 50% { opacity: 0.55; } }
 @media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
 .gal-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(0,0,0,0.65); color: #fff; font-size: 26px; line-height: 1; cursor: pointer; }

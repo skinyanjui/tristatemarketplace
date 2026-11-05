@@ -15,7 +15,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
   const href = `/listing/${listing.id}`;
   // One status pill on the photo, by importance: Sold, Featured, then the date of an event or sale.
   const top = listing.sold ? "sold" : listing.featured ? "featured" : listing.eventDate ? "date" : null;
-  const meta = [listing.condition.replace(/^Used - /, ""), (listing.eventDate && top !== "date" ? `${niceDate(listing.eventDate)} · ` : "") + (listing.place || "Location not set")].filter(Boolean);
+  const dateInRow = !!listing.eventDate && top !== "date";
   return (
     <article className={`card${listing.sold ? " sold" : ""}${listing.featured ? " featured" : ""}`}>
       <div className="card-photo">
@@ -31,15 +31,15 @@ export function ListingCard({ listing }: { listing: Listing }) {
       <div className="card-body">
         <Link href={href} className="card-link" aria-hidden="true" tabIndex={-1} />
         <h2 className="ctitle">{listing.title}</h2>
+        <div className="place">
+          <Icon name="pin" size={13} />
+          <span>{dateInRow && listing.eventDate && <b>{niceDate(listing.eventDate)}</b>}{dateInRow && " · "}{listing.place || "Location not set"}</span>
+        </div>
         <div className="card-row">
           <span className="price">{listing.price.replace(/\s*–\s*/g, "–").replace(/\s*\/\s*/g, "/")}</span>
           <Link href={`${href}#contact`} className="act" aria-label={`${cat.action.label}: ${listing.title}`}>
             <span><Icon name={cat.action.icon} size={18} color="#fff" /></span>
           </Link>
-        </div>
-        <div className="place">
-          <Icon name="pin" size={13} />
-          <span>{meta.join(" · ")}</span>
         </div>
       </div>
     </article>
