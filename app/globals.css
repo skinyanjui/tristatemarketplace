@@ -249,3 +249,8 @@ a:not([class]) { color: var(--accent-text); }
 .sortmenu-item:hover, .sortmenu-item:focus-visible { background: var(--fill, rgba(0,0,0,.06)); }
 .sortmenu-item[aria-checked="true"] { font-weight: 600; color: var(--accent-text); }
 @media (max-width: 719px) { .sortmenu-pop { right: auto; left: 0; } }
+.pricepop { padding: 14px; gap: 12px; min-width: 240px; }
+.pricepop .field { margin: 0; }
+.sortmenu-val { display: inline-grid; text-align: left; }
+.sortmenu-val > strong { grid-area: 1 / 1; }
+.sortmenu-val > .ghost { visibility: hidden; height: 0; overflow: hidden; }

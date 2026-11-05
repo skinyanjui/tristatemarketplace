@@ -32,7 +32,11 @@ export function SortMenu({ options, value, onChange, label = "Sort" }: {
   return (
     <div className="sortmenu" ref={root} onKeyDown={key}>
       <button type="button" className="chip" aria-haspopup="menu" aria-expanded={open} aria-controls={id} onClick={() => setOpen((o) => !o)}>
-        {label}: <strong>{current.label}</strong>
+        {label}:
+        <span className="sortmenu-val">
+          {/* Every label is stacked invisibly so the button keeps one width whatever is picked. */}
+          {options.map((o) => <strong key={o.value} aria-hidden={o.value !== current.value} className={o.value === current.value ? "" : "ghost"}>{o.label}</strong>)}
+        </span>
         <svg aria-hidden width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
       </button>
       {open && (

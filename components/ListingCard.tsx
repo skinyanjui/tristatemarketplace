@@ -5,6 +5,11 @@ import { Icon } from "./Icon";
 import { ListingImage } from "./ListingArt";
 import { SaveButton } from "./SaveButton";
 
+/** "Sat, Nov 7" from a YYYY-MM-DD date, ignoring the viewer's time zone. */
+export function niceDate(iso: string) {
+  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
+}
+
 export function ListingCard({ listing }: { listing: Listing }) {
   const cat = categoryOf(listing.kind);
   const href = `/listing/${listing.id}`;
@@ -28,7 +33,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
         </div>
         <div className="place">
           <Icon name="pin" size={13} />
-          <span>{listing.place || "Location not set"}</span>
+          <span>{listing.eventDate ? `${niceDate(listing.eventDate)} · ` : ""}{listing.place || "Location not set"}</span>
         </div>
       </div>
     </article>

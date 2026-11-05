@@ -4,10 +4,10 @@ import type { Listing } from "./types";
 type Row = {
   id: string; kind: string; title: string; place: string; price: string; condition: string;
   description: string; details: [string, string][] | null; photos: string[] | null;
-  seller_id: string | null; seller_name: string; seller_meta: string; created_at: string; status: string;
+  seller_id: string | null; seller_name: string; seller_meta: string; created_at: string; status: string; event_date: string | null;
 };
 
-const COLUMNS = "id,seller_id,kind,title,place,price,condition,description,details,photos,seller_name,seller_meta,created_at,status";
+const COLUMNS = "id,seller_id,kind,title,place,price,condition,description,details,photos,seller_name,seller_meta,created_at,status,event_date";
 
 function posted(iso: string): string {
   const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
@@ -22,11 +22,11 @@ export function fromRow(r: Row): Listing {
     id: r.id, kind: r.kind, title: r.title, place: r.place, price: r.price, condition: r.condition,
     description: r.description, details: r.details ?? [],
     seller: { name: r.seller_name || "Neighbor", meta: r.seller_meta },
-    posted: posted(r.created_at), photoCount: photos.length, photos, sellerId: r.seller_id, sold: r.status === "sold",
+    posted: posted(r.created_at), photoCount: photos.length, photos, sellerId: r.seller_id, sold: r.status === "sold", eventDate: r.event_date ?? undefined,
   };
 }
 
-export type Sort = "new" | "old" | "low" | "high" | "az" | "za";
+export type Sort = "new" | "old" | "soon" | "low" | "high" | "az" | "za";
 export const PAGE_SIZE = 48;
 
 export type Opts = { q?: string; cat?: string; min?: number; max?: number; sort?: Sort; page?: number };
@@ -39,10 +39,13 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
   if (opts.cat && opts.cat !== "all") query = query.eq("kind", opts.cat);
   const q = (opts.q ?? "").trim().replace(/[%,()*]/g, " ");
   if (q) query = query.or(`title.ilike.%${q}%,place.ilike.%${q}%,kind.ilike.%${q}%,description.ilike.%${q}%`);
+  // Events and sales drop off the site once their date has passed.
+  query = query.or(`event_date.is.null,event_date.gte.${new Date().toISOString().slice(0, 10)}`);
   if (opts.min !== undefined) query = query.gte("price_value", opts.min);
   if (opts.max !== undefined) query = query.lte("price_value", opts.max);
   query = query.order("status", { ascending: true });
   if (opts.sort === "low" || opts.sort === "high") query = query.order("price_value", { ascending: opts.sort === "low", nullsFirst: false });
+  if (opts.sort === "soon") query = query.order("event_date", { ascending: true, nullsFirst: false });
   if (opts.sort === "az" || opts.sort === "za") query = query.order("title", { ascending: opts.sort === "az" });
   query = query.order("created_at", { ascending: opts.sort === "old" }).range(from, from + PAGE_SIZE - 1);
   const { data, error, count } = await query;

@@ -17,4 +17,6 @@ export type Listing = {
   sellerId?: string | null;
   /** Marked sold by the seller. Still shown, but dimmed, and not contactable. */
   sold?: boolean;
+  /** ISO date (YYYY-MM-DD) for events and garage sales. */
+  eventDate?: string;
 };

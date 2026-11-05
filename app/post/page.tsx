@@ -53,7 +53,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
           const { data, error: err } = await sb.from("tm_listings").insert({
             seller_id: uid, seller_name: email.split("@")[0], kind: cat,
             title: String(fd.get("title")).trim(), place: String(fd.get("place")).trim(), price,
-            condition: String(fd.get("cond") ?? ""), description: String(fd.get("desc") ?? "").trim(), photos,
+            condition: String(fd.get("cond") ?? ""), event_date: (cat === "event" || cat === "sale") ? String(fd.get("date") || "") || null : null, description: String(fd.get("desc") ?? "").trim(), photos,
           }).select("id").single();
           if (err) throw err;
           router.push(`/listing/${data.id}`);
@@ -100,6 +100,12 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
             </select>
           </div>
         </div>
+        {(cat === "event" || cat === "sale") && (
+          <div className="field">
+            <label htmlFor="date">Date</label>
+            <input id="date" name="date" type="date" className="input" required min={new Date().toISOString().slice(0, 10)} />
+          </div>
+        )}
         <div className="field">
           <label htmlFor="place">Location</label>
           <input id="place" name="place" className="input" required placeholder="City, state or ZIP" />
