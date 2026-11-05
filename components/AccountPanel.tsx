@@ -44,6 +44,29 @@ function Mine({ uid }: { uid: string }) {
   );
 }
 
+type Msg = { id: string; listing_id: string; sender_email: string; body: string; created_at: string; seller_id: string };
+
+function Inbox({ uid }: { uid: string }) {
+  const [rows, setRows] = useState<Msg[] | null>(null);
+  useEffect(() => {
+    supabaseBrowser().from("tm_messages").select("id,listing_id,seller_id,sender_email,body,created_at").eq("seller_id", uid).order("created_at", { ascending: false }).limit(50)
+      .then(({ data }) => setRows((data as Msg[]) ?? []));
+  }, [uid]);
+  if (!rows) return null;
+  if (!rows.length) return <div className="notice">No messages yet. Buyers who message you will show up here.</div>;
+  return (
+    <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
+      {rows.map((m) => (
+        <li key={m.id} className="notice">
+          <strong>{m.sender_email}</strong> · <Link href={`/listing/${m.listing_id}`}>listing</Link> · {new Date(m.created_at).toLocaleDateString()}
+          <p style={{ margin: "6px 0 0", color: "var(--label)" }}>{m.body}</p>
+          <a href={`mailto:${m.sender_email}`}>Reply by email</a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function AccountPanel() {
   return (
     <AuthGate note="Sign in with your email to post listings and manage them. No password needed.">
@@ -55,6 +78,8 @@ export function AccountPanel() {
           </div>
           <h2 style={{ margin: 0, fontSize: 17 }}>Your listings</h2>
           <Mine uid={s.user.id} />
+          <h2 style={{ margin: 0, fontSize: 17 }}>Messages</h2>
+          <Inbox uid={s.user.id} />
         </section>
       )}
     </AuthGate>

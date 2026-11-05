@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ContactSeller } from "@/components/ContactSeller";
 import { Icon } from "@/components/Icon";
 import { ListingImage } from "@/components/ListingArt";
 import { SaveButton } from "@/components/SaveButton";
@@ -52,7 +53,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
         </div>
         <aside className="panel" id="contact">
           <div className="dprice">{l.price}</div>
-          <Link href="/account" className="btn btn-lg"><Icon name={cat.action.icon} size={18} color="#fff" />{cat.action.label}</Link>
+          <ContactSeller listingId={l.id} sellerId={l.sellerId ?? null} label={cat.action.label} />
           <div className="seller">
             <span className="avatar" aria-hidden="true">{initials}</span>
             <div>

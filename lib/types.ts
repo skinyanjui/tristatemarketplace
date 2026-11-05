@@ -13,4 +13,6 @@ export type Listing = {
   photoCount: number;
   /** Optional uploaded photo URLs. When empty the card shows an illustration. */
   photos?: string[];
+  /** Set when a real member posted it; sample listings have no seller to message. */
+  sellerId?: string | null;
 };
