@@ -7,13 +7,15 @@ import { ReportsReview } from "./ReportsReview";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { categoryOf } from "@/lib/categories";
 
-type Mine = { id: string; title: string; kind: string; price: string; status: string; featured_until: string | null };
+type Mine = { id: string; title: string; kind: string; price: string; status: string; featured_until: string | null; expires_at: string };
+
+const daysLeft = (iso: string) => Math.max(0, Math.ceil((new Date(iso).getTime() - Date.now()) / 86_400_000));
 
 function Mine({ uid }: { uid: string }) {
   const [rows, setRows] = useState<Mine[] | null>(null);
   const [err, setErr] = useState("");
   const load = () =>
-    supabaseBrowser().from("tm_listings").select("id,title,kind,price,status,featured_until").eq("seller_id", uid).order("created_at", { ascending: false })
+    supabaseBrowser().from("tm_listings").select("id,title,kind,price,status,featured_until,expires_at").eq("seller_id", uid).order("created_at", { ascending: false })
       .then(({ data, error }) => (error ? setErr(error.message) : setRows(data as Mine[])));
   useEffect(() => { load(); }, [uid]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -30,6 +32,11 @@ function Mine({ uid }: { uid: string }) {
     if (out.url) { window.location.assign(out.url); return; }
     if (out.error) { setNote(out.error); return; }
     setNote("Done! Your listing is featured for 7 days. (Sample mode, no charge.)");
+    load();
+  }
+  async function renew(id: string) {
+    const { error } = await supabaseBrowser().rpc("tm_renew", { listing_id: id });
+    setNote(error ? error.message : "Renewed for 60 more days.");
     load();
   }
   async function remove(id: string) {
@@ -49,8 +56,10 @@ function Mine({ uid }: { uid: string }) {
           <span style={{ flex: 1, minWidth: 180 }}>
             <Link href={`/listing/${r.id}`}><strong>{r.title}</strong></Link><br />
             {categoryOf(r.kind).label} · {r.price || "No price"} · {r.status}
+            {r.status !== "removed" && (new Date(r.expires_at) < new Date() ? " · Expired, hidden from the site" : daysLeft(r.expires_at) <= 14 ? ` · Expires in ${daysLeft(r.expires_at)} days` : "")}
             {r.featured_until && new Date(r.featured_until) > new Date() && ` · Featured until ${new Date(r.featured_until).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
           </span>
+          {r.status !== "removed" && (new Date(r.expires_at) < new Date() || daysLeft(r.expires_at) <= 14) && <button className="btn" onClick={() => renew(r.id)}>Renew</button>}
           {r.status === "removed" && <span className="muted">Removed by moderators</span>}
           {r.status === "active" && <button className="btn" onClick={() => feature(r.id)}>{r.featured_until && new Date(r.featured_until) > new Date() ? "Extend" : "Feature"}</button>}
           {r.status !== "removed" && <button className="btn" onClick={() => setStatus(r.id, r.status === "active" ? "sold" : "active")}>{r.status === "active" ? "Mark sold" : "Relist"}</button>}

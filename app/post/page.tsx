@@ -59,7 +59,8 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
           if (err) throw err;
           router.push(`/listing/${data.id}`);
         } catch (err) {
-          setError((err as { message?: string } | null)?.message || "Oops, something went wrong. Please try again.");
+          const m = (err as { message?: string } | null)?.message ?? "";
+          setError(m.includes("price_text_check") ? "Price should be a number, like 120, or the word Free." : m.includes("photos_check") ? "One of those photos could not be used. Please try uploading again." : m || "Oops, something went wrong. Please try again.");
           setBusy(false);
         }
       }}
