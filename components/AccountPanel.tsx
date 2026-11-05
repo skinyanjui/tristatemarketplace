@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AuthGate } from "./AuthGate";
+import { ReportsReview } from "./ReportsReview";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { categoryOf } from "@/lib/categories";
 
@@ -80,6 +81,7 @@ export function AccountPanel() {
           <Mine uid={s.user.id} />
           <h2 style={{ margin: 0, fontSize: 17 }}>Messages</h2>
           <Inbox uid={s.user.id} />
+          <ReportsReview uid={s.user.id} />
         </section>
       )}
     </AuthGate>
