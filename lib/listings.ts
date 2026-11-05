@@ -26,14 +26,35 @@ export function fromRow(r: Row): Listing {
   };
 }
 
-export async function getListings(opts: { q?: string; cat?: string } = {}): Promise<Listing[]> {
+/** First number in a display price ("$18,500", "$2 – $600"); "Free" is 0; no number means unknown. */
+export function priceValue(price: string): number | null {
+  if (/free/i.test(price)) return 0;
+  const m = price.replace(/,/g, "").match(/\d+(\.\d+)?/);
+  return m ? Number(m[0]) : null;
+}
+
+export type Sort = "new" | "low" | "high";
+
+export async function getListings(opts: { q?: string; cat?: string; min?: number; max?: number; sort?: Sort } = {}): Promise<Listing[]> {
   let query = supabaseServer().from("tm_listings").select(COLUMNS).eq("status", "active").order("created_at", { ascending: false }).limit(200);
   if (opts.cat && opts.cat !== "all") query = query.eq("kind", opts.cat);
   const q = (opts.q ?? "").trim().replace(/[%,()*]/g, " ");
   if (q) query = query.or(`title.ilike.%${q}%,place.ilike.%${q}%,kind.ilike.%${q}%,description.ilike.%${q}%`);
   const { data, error } = await query;
   if (error) throw new Error(`Could not load listings: ${error.message}`);
-  return (data as Row[]).map(fromRow);
+  let out = (data as Row[]).map(fromRow);
+  const { min, max, sort } = opts;
+  if (min !== undefined || max !== undefined) {
+    out = out.filter((l) => {
+      const v = priceValue(l.price);
+      return v !== null && (min === undefined || v >= min) && (max === undefined || v <= max);
+    });
+  }
+  if (sort === "low" || sort === "high") {
+    const key = (l: Listing) => priceValue(l.price) ?? (sort === "low" ? Infinity : -Infinity);
+    out.sort((a, b) => (sort === "low" ? key(a) - key(b) : key(b) - key(a)));
+  }
+  return out;
 }
 
 export async function getListing(id: string): Promise<Listing | null> {
