@@ -45,7 +45,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           {catLabel ? ` in ${catLabel}` : ""}
           {within ? ` within ${within} miles of ${originName}` : ""}
           {q ? ` matching "${q}"` : ""}
-          {sort === "near" && !within ? ` · closest to ${originName} first` : ""}
+          {sort === "near" && !within ? <span className="count-extra"> · closest to {originName} first</span> : null}
         </div>
         <Suspense fallback={<div style={{ height: 36 }} />}>
           <Filters origin={origin} defaultSort={defaultSort} />
@@ -60,7 +60,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       ) : (
         <div className="empty">
           <strong>{q ? `No matches for “${q}”` : "Nothing here yet"}</strong>
-          <span>{q ? "Check the spelling, try a simpler word, or clear a filter. New things get posted every day!" : "Try a different category or price range. New things get posted every day!"}</span>
+          <span>{within ? `Nothing within ${within} miles of ${originName}. Try a bigger distance or choose Any distance.` : q ? "Check the spelling, try a simpler word, or clear a filter. New things get posted every day!" : "Try a different category or price range. New things get posted every day!"}</span>
           <div className="next-row">
             <Link href="/" className="btn">Clear search and filters</Link>
             <Link href="/post" className="btn btn-ghost">Post a listing</Link>

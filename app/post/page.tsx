@@ -1,10 +1,12 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- local blob previews cannot use next/image */
 
 import { localToday } from "@/lib/dates";
 import { TOWNS, townFor } from "@/lib/places";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Notice } from "@/components/Notice";
+import { toast } from "@/components/Toaster";
 import { useRouter } from "next/navigation";
 import { AuthGate } from "@/components/AuthGate";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -31,6 +33,10 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
   const [error, setError] = useState("");
   const [cat, setCat] = useState("sale");
   const [picked, setPicked] = useState(0);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [titleLen, setTitleLen] = useState(0);
+  const [descLen, setDescLen] = useState(0);
+  useEffect(() => () => previews.forEach((u) => URL.revokeObjectURL(u)), [previews]);
   const [known, setKnown] = useState(true);
   const f = FIELDS[cat] ?? DEFAULT;
 
@@ -67,6 +73,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
             condition: String(fd.get("cond") ?? ""), lat: townFor(String(fd.get("place") ?? ""))?.lat ?? null, lng: townFor(String(fd.get("place") ?? ""))?.lng ?? null, event_date: (cat === "event" || cat === "sale") ? String(fd.get("date") || "") || null : null, description: String(fd.get("desc") ?? "").trim(), photos,
           }).select("id").single();
           if (err) throw err;
+          toast("Your listing is live!");
           router.push(`/listing/${data.id}`);
         } catch (err) {
           // Do not leave uploaded photos behind when the post did not go through.
@@ -92,20 +99,30 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
       <section className="field">
         <span className="lbl h3">Photos</span>
         <label className="notice" style={{ cursor: "pointer", textAlign: "center", padding: 28 }}>
-          <input ref={files} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple className="sr-only" onChange={(e) => setPicked(e.target.files?.length ?? 0)} />
+          <input ref={files} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple className="sr-only" onChange={(e) => { const fl = Array.from(e.target.files ?? []); setPicked(fl.length); setPreviews(fl.slice(0, 8).map((f) => URL.createObjectURL(f))); }} />
           {picked ? `${picked} photo${picked > 1 ? "s" : ""} selected. The first one is shown on your card.` : "Add photos (up to 8). The first one is shown on your card."}
         </label>
+        <small className="hint">JPG, PNG, WebP or HEIC. Up to 8 photos, 8 MB each. Listings with a clear first photo get noticed.</small>
+        {previews.length > 0 && (
+          <ul className="thumbs" aria-label="Selected photos">
+            {previews.map((u, i) => (
+              <li key={u}><img src={u} alt={`Photo ${i + 1}`} />{i === 0 && <span className="pill">Cover</span>}</li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <div className="field">
           <label htmlFor="title">Title</label>
-          <input id="title" name="title" maxLength={140} className="input" required placeholder={`${categoryOf(cat).label}: what it is and the key detail`} />
+          <input id="title" name="title" maxLength={140} onChange={(e) => setTitleLen(e.target.value.length)} className="input" required placeholder={`${categoryOf(cat).label}: what it is and the key detail`} aria-describedby="title-hint" />
+          <small id="title-hint" className={`hint${titleLen > 125 ? " hint-warn" : ""}`}>Lead with what it is, then the key detail. {titleLen}/140</small>
         </div>
         <div className="row">
           <div className="field">
             <label htmlFor="price">{f.price}</label>
-            <input id="price" name="price" maxLength={40} className="input" inputMode="decimal" placeholder={f.priceHint} />
+            <input id="price" name="price" maxLength={40} className="input" inputMode="decimal" placeholder={f.priceHint} aria-describedby="price-hint" />
+            <small id="price-hint" className="hint">Numbers only, or write Free.</small>
           </div>
           <div className="field" style={{ flex: "0 1 auto" }}>
             <label htmlFor="cond">{f.cond}</label>
@@ -130,7 +147,8 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
         </div>
         <div className="field">
           <label htmlFor="desc">Description</label>
-          <textarea id="desc" name="desc" maxLength={4000} className="input" rows={5} placeholder="Tell buyers what makes this worth a look" />
+          <textarea id="desc" name="desc" maxLength={4000} onChange={(e) => setDescLen(e.target.value.length)} className="input" rows={5} placeholder="Tell buyers what makes this worth a look" aria-describedby="desc-hint" />
+          <small id="desc-hint" className={`hint${descLen > 3600 ? " hint-warn" : ""}`}>Condition, size, what is included, and when buyers can reach you. {descLen}/4000</small>
         </div>
       </section>
 
@@ -148,6 +166,7 @@ export default function PostPage() {
   return (
     <main className="form">
       <h1>Post a listing</h1>
+      <p className="muted lead">Free to post. Your listing stays up for 60 days, and you can renew it in one tap.</p>
       <AuthGate next="/post" title="Sign in to post a listing" note="So you can manage, renew and mark it sold later.">
         {(s) => <PostForm uid={s.user.id} email={s.user.email ?? "neighbor"} />}
       </AuthGate>

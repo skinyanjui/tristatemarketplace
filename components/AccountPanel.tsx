@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Notice } from "./Notice";
+import { toast } from "./Toaster";
 import { AuthGate } from "./AuthGate";
 import { ReportsReview } from "./ReportsReview";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -22,7 +23,7 @@ function Mine({ uid }: { uid: string }) {
 
   async function setStatus(id: string, status: string) {
     const { error } = await supabaseBrowser().from("tm_listings").update({ status }).eq("id", id);
-    setNote(error ? "That did not go through. Please try again." : status === "sold" ? "Marked as sold. Nice work!" : "Your listing is back on the site.");
+    if (error) setNote("That did not go through. Please try again."); else { setNote(""); toast(status === "sold" ? "Marked as sold. Nice work!" : "Your listing is back on the site"); }
     load();
   }
   const [note, setNote] = useState("");
@@ -33,12 +34,12 @@ function Mine({ uid }: { uid: string }) {
     const out = (await res.json()) as { mode?: string; url?: string; error?: string };
     if (out.url) { window.location.assign(out.url); return; }
     if (out.error) { setNote(out.error); return; }
-    setNote("Done! Your listing is featured for 7 days. (Sample mode, no charge.)");
+    setNote(""); toast("Featured for 7 days (sample mode, no charge)");
     load();
   }
   async function renew(id: string) {
     const { error } = await supabaseBrowser().rpc("tm_renew", { listing_id: id });
-    setNote(error ? error.message : "Renewed for 60 more days.");
+    if (error) setNote(error.message); else { setNote(""); toast("Renewed for 60 more days"); }
     load();
   }
   const [confirming, setConfirming] = useState<string | null>(null);
@@ -53,7 +54,7 @@ function Mine({ uid }: { uid: string }) {
     const marker = "/tm-listing-photos/";
     const own = (row?.photos ?? []).filter((u) => u.includes(marker)).map((u) => decodeURIComponent(u.split(marker)[1]));
     if (own.length) await sb.storage.from("tm-listing-photos").remove(own);
-    setNote("Listing deleted.");
+    setNote(""); toast("Listing deleted");
     load();
   }
 
@@ -62,7 +63,7 @@ function Mine({ uid }: { uid: string }) {
   if (!rows.length) return <div className="notice">Nothing posted yet. Ready to sell something? <Link href="/post">Post one</Link>.</div>;
   return (
     <>
-    {note && <Notice tone="ok">{note}</Notice>}
+    {note && <Notice tone="bad">{note}</Notice>}
     <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
       {rows.map((r) => (
         <li key={r.id} className="notice" style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
@@ -114,11 +115,13 @@ export function AccountPanel() {
         <section style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
             <span style={{ flex: 1 }}>Signed in as <strong>{s.user.email}</strong></span>
-            <button className="btn" onClick={() => supabaseBrowser().auth.signOut()}>Sign out</button>
+            <button className="btn" onClick={() => { supabaseBrowser().auth.signOut(); toast("Signed out"); }}>Sign out</button>
           </div>
           <h2 className="h3">Your listings</h2>
+          <p className="muted" style={{ margin: "-8px 0 0" }}>Each listing stays up for 60 days. Renew, mark sold or feature it from here.</p>
           <Mine uid={s.user.id} />
           <h2 className="h3">Messages</h2>
+          <p className="muted" style={{ margin: "-8px 0 0" }}>Buyers write to you here. Reply by email, and meet in a public place.</p>
           <Inbox uid={s.user.id} />
           <ReportsReview uid={s.user.id} />
         </section>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Icon } from "./Icon";
+import { toast } from "./Toaster";
 
 /** Native share sheet where the device has one, otherwise copies the link. */
 export function ShareButton({ title }: { title: string }) {
@@ -12,6 +13,7 @@ export function ShareButton({ title }: { title: string }) {
       if (navigator.share) { await navigator.share({ title, url }); return; }
       await navigator.clipboard.writeText(url);
       setCopied(true);
+      toast("Link copied");
       setTimeout(() => setCopied(false), 2000);
     } catch { /* cancelled or blocked: nothing to do */ }
   }

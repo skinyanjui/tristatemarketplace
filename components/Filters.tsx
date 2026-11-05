@@ -86,6 +86,7 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
                 <label htmlFor="max">Max $</label>
                 <input id="max" name="max" className="input" inputMode="numeric" pattern="[0-9]*" defaultValue={max} placeholder="Any" />
               </div>
+              <small className="hint">Leave a box empty for no limit.</small>
               <button className="btn">Apply</button>
             </form>
           )}
@@ -116,6 +117,7 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
                   {TOWNS.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
                 </select>
               </div>
+              <small className="hint">Closest listings to your town show first.</small>
               <button className="btn">Apply</button>
             </form>
           )}
