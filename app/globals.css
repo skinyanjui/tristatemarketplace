@@ -199,7 +199,7 @@ textarea.input { height: auto; padding: 12px; line-height: 24px; resize: vertica
 
 /* ---------- Skeletons ---------- */
 .skel { background: var(--fill); border-radius: 16px; animation: skel 1.2s ease-in-out infinite; }
-.skel-card { height: 0; padding-top: calc(87.5% + 80px); }
+.skel-card { height: 0; padding-top: calc(87.5% + 102px); }
 @keyframes skel { 50% { opacity: 0.55; } }
 @media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
 .gal-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(0,0,0,0.65); color: #fff; font-size: 26px; line-height: 1; cursor: pointer; }
@@ -221,3 +221,4 @@ textarea.input { height: auto; padding: 12px; line-height: 24px; resize: vertica
 .filters .chip { height: 36px; }
 @media (max-width: 420px) { .price { font-size: 18px; } }
 @media (max-width: 370px) { .price { font-size: 16px; } }
+.ctitle { margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
