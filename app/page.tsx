@@ -1,9 +1,14 @@
+import { Fragment } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import { Filters } from "@/components/Filters";
 import { ListingCard } from "@/components/ListingCard";
+import { AdCard, type Ad } from "@/components/AdCard";
+
+// Test ad for the outside-ad slot; replace with a real ad source later.
+const TEST_AD: Ad = { id: "test-ad", advertiser: "Example Co.", headline: "Your business here: reach tristate shoppers", detail: "Outside ad · same size as a listing", cta: "Learn more", href: "https://example.com" };
 import { CATEGORY_BY_ID } from "@/lib/categories";
 import { DEFAULT_TOWN, TOWN_BY_ID, nearestTown } from "@/lib/places";
 import { getListings, type Sort } from "@/lib/listings";
@@ -53,8 +58,11 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       </div>
       {listings.length > 0 ? (
         <div className="grid">
-          {listings.map((l) => (
-            <ListingCard key={l.id} listing={l} />
+          {listings.map((l, i) => (
+            <Fragment key={l.id}>
+              <ListingCard listing={l} />
+              {page === 1 && i === 5 && <AdCard ad={TEST_AD} />}
+            </Fragment>
           ))}
         </div>
       ) : (
