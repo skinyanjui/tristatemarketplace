@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { Icon } from "./Icon";
+import { useAnchoredPop } from "./useAnchoredPop";
 
 export type SortOption = { value: string; label: string; hint?: string };
 
@@ -12,6 +13,7 @@ export function SortMenu({ options, value, onChange, label = "Sort", primary }: 
   primary?: string[];
 }) {
   const [open, setOpen] = useState(false);
+  const pos = useAnchoredPop(open, () => setOpen(false));
   const main = primary ? options.filter((o) => primary.includes(o.value)) : options;
   const more = primary ? options.filter((o) => !primary.includes(o.value)) : [];
   const [moreOpen, setMoreOpen] = useState(false);
@@ -47,7 +49,7 @@ export function SortMenu({ options, value, onChange, label = "Sort", primary }: 
 
   return (
     <div className="sortmenu" ref={root} onKeyDown={key}>
-      <button type="button" className="chip" aria-haspopup="menu" aria-expanded={open} aria-controls={id} onClick={() => { setMoreOpen(false); setOpen((o) => !o); }}>
+      <button type="button" className="chip" aria-haspopup="menu" aria-expanded={open} aria-controls={id} onClick={(e) => { pos.place(e.currentTarget); setMoreOpen(false); setOpen((o) => !o); }}>
         <span className="sortmenu-label">{label}:</span>
         <span className="sortmenu-val">
           {/* Every label is stacked invisibly so the button keeps one width whatever is picked. */}
@@ -56,7 +58,7 @@ export function SortMenu({ options, value, onChange, label = "Sort", primary }: 
         <Icon name="chev" size={14} />
       </button>
       {open && (
-        <div id={id} role="menu" aria-label={label} className="sortmenu-pop">
+        <div id={id} role="menu" aria-label={label} className="sortmenu-pop" style={pos.style}>
           {main.map(item)}
           {more.length > 0 && (
             <>

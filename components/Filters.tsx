@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SortMenu } from "./SortMenu";
+import { useAnchoredPop } from "./useAnchoredPop";
 import { RADII, TOWNS, TOWN_BY_ID } from "@/lib/places";
 
 const SORTS = [
@@ -33,6 +34,8 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
   const near = params.get("near") ?? "";
   const within = params.get("within") ?? "";
   const [distOpen, setDistOpen] = useState(false);
+  const pricePos = useAnchoredPop(open, () => setOpen(false));
+  const distPos = useAnchoredPop(distOpen, () => setDistOpen(false));
   const dist = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!distOpen) return;
@@ -79,10 +82,11 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
     <>
       <div className="filters" style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
         <div className="sortmenu" ref={pop} onKeyDown={(e) => { if (e.key === "Escape") setOpen(false); }}>
-          <button type="button" className="chip" aria-pressed={open} aria-expanded={open} aria-haspopup="dialog" onClick={() => setOpen((o) => !o)}>Price range</button>
+          <button type="button" className="chip" aria-pressed={open} aria-expanded={open} aria-haspopup="dialog" onClick={(e) => { pricePos.place(e.currentTarget); setOpen((o) => !o); }}>Price range</button>
           {open && (
             <form
               className="sortmenu-pop pricepop"
+              style={pricePos.style}
               aria-label="Price range"
               onSubmit={(e) => {
                 e.preventDefault();
@@ -105,10 +109,11 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
           )}
         </div>
         <div className="sortmenu" ref={dist} onKeyDown={(e) => { if (e.key === "Escape") setDistOpen(false); }}>
-          <button type="button" className="chip" aria-expanded={distOpen} aria-haspopup="dialog" onClick={() => setDistOpen((o) => !o)}>Distance</button>
+          <button type="button" className="chip" aria-expanded={distOpen} aria-haspopup="dialog" onClick={(e) => { distPos.place(e.currentTarget); setDistOpen((o) => !o); }}>Distance</button>
           {distOpen && (
             <form
               className="sortmenu-pop pricepop"
+              style={distPos.style}
               aria-label="Distance"
               onSubmit={(e) => {
                 e.preventDefault();
