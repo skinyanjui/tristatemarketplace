@@ -368,8 +368,8 @@ body { font-size: var(--fs-body); }
 .place { font-size: var(--fs-sm); line-height: 18px; }
 .act span { font-size: var(--fs-sm); }
 .ctitle { font-size: var(--fs-ui); line-height: 20px; font-weight: 600; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; height: 40px; }
-.card-body { height: 122px; }
-.skel-card { padding-top: calc(87.5% + 122px); }
+.card-body { height: 140px; }
+.skel-card { padding-top: calc(87.5% + 140px); }
 .price { font-size: 20px; font-weight: 700; }
 .facts dt { font-size: var(--fs-cap); font-weight: 500; }
 .facts dd { font-size: var(--fs-body); font-weight: 500; }
@@ -493,3 +493,8 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
 .empty { animation: rise .3s ease-out both; }
 .btn[disabled] { opacity: .7; cursor: progress; }
 @media (max-width: 719px) { .count-extra { display: none; } }
+.quick { display: flex; flex-wrap: wrap; gap: 6px; }
+.quick .chip { height: 32px; font-size: var(--fs-sm); padding-inline: 12px; }
+.cfact { margin: 0; font-size: var(--fs-sm); line-height: 18px; font-weight: 500; color: var(--label2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card .place { font-weight: 500; }
+.place .miles { color: var(--label2); font-weight: 500; }

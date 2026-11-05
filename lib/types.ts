@@ -19,6 +19,8 @@ export type Listing = {
   sold?: boolean;
   /** ISO date (YYYY-MM-DD) for events and garage sales. */
   eventDate?: string;
+  /** Miles from the visitor's town (or the one they chose), when known. */
+  miles?: number;
   featured?: boolean;
   featuredUntil?: string;
 };
