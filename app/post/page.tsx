@@ -32,6 +32,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [cat, setCat] = useState("sale");
+  const [wanted, setWanted] = useState(false);
   const [picked, setPicked] = useState(0);
   const [previews, setPreviews] = useState<string[]>([]);
   const [titleLen, setTitleLen] = useState(0);
@@ -76,7 +77,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
           const raw = String(fd.get("price") ?? "").trim();
           const price = raw && /^[\d.,\s–-]+$/.test(raw) ? "$" + raw : raw;
           const { data, error: err } = await sb.from("tm_listings").insert({
-            seller_id: uid, seller_name: email.split("@")[0], kind: cat,
+            seller_id: uid, seller_name: email.split("@")[0], seller_meta: wanted ? "Private buyer" : "Private seller", wanted, kind: cat,
             title: String(fd.get("title")).trim(), place: String(fd.get("place")).trim(), price,
             condition: String(fd.get("cond") ?? ""), lat: townFor(String(fd.get("place") ?? ""))?.lat ?? null, lng: townFor(String(fd.get("place") ?? ""))?.lng ?? null, event_date: (cat === "event" || cat === "sale") ? String(fd.get("date") || "") || null : null, description: String(fd.get("desc") ?? "").trim(), photos,
           }).select("id").single();
@@ -94,7 +95,15 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
       }}
     >
       <fieldset style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }}>
-        <legend className="h3" style={{ padding: 0, marginBottom: 12 }}>What are you posting?</legend>
+        <legend className="h3" style={{ padding: 0, marginBottom: 12 }}>What kind of post?</legend>
+        <div className="tiles">
+          <button type="button" className="tile" aria-pressed={!wanted} onClick={() => setWanted(false)}>I’m selling or offering</button>
+          <button type="button" className="tile" aria-pressed={wanted} onClick={() => setWanted(true)}>I’m looking to buy</button>
+        </div>
+        {wanted && <small className="hint">Sellers will see “Wanted” on your post and can reply with “I have this”. Use the price box for your budget.</small>}
+      </fieldset>
+      <fieldset style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }}>
+        <legend className="h3" style={{ padding: 0, marginBottom: 12 }}>{wanted ? "What are you looking for?" : "What are you posting?"}</legend>
         {GROUPS.map((g) => (
           <div key={g.id} className="tilegroup" role="group" aria-labelledby={`tg-${g.id}`}>
             <div id={`tg-${g.id}`} className="catgroup">{g.label}</div>
@@ -134,7 +143,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
         </div>
         <div className="row">
           <div className="field">
-            <label htmlFor="price">{f.price}</label>
+            <label htmlFor="price">{wanted ? "Your budget" : f.price}</label>
             <input id="price" name="price" maxLength={40} className="input" inputMode="decimal" placeholder={f.priceHint} aria-describedby="price-hint" />
             <small id="price-hint" className="hint">Numbers only, or write Free.</small>
           </div>

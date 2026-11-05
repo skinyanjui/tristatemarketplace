@@ -27,5 +27,9 @@ export type Listing = {
   /** A paid placement. Always shown with a "Sponsored" label. */
   sponsored?: boolean;
   featured?: boolean;
+  /** A buyer's "wanted" post: the price is their budget and the action is "I have this". */
+  wanted?: boolean;
+  /** The seller has been verified by Tristate Market. */
+  verified?: boolean;
   featuredUntil?: string;
 };

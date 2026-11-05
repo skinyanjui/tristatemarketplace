@@ -3,11 +3,13 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SortMenu } from "./SortMenu";
+import { SaveSearch } from "./SaveSearch";
 import { RADII, TOWNS, TOWN_BY_ID } from "@/lib/places";
 
 const SORTS = [
   { value: "new", label: "Newest first" },
   { value: "soon", label: "Happening soonest" },
+  { value: "verified", label: "Verified sellers first" },
   { value: "old", label: "Oldest first" },
   { value: "low", label: "Price: low to high" },
   { value: "high", label: "Price: high to low" },
@@ -50,7 +52,7 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
     ...(q ? [{ value: "best", label: "Best match" }] : []),
     ...(fallback === "soon" ? [byValue.soon] : []),
     { value: "near", label: "Closest first" }, byValue.new, byValue.low, byValue.high,
-    ...(fallback === "soon" ? [] : [byValue.soon]), byValue.old, byValue.az, byValue.za,
+    ...(fallback === "soon" ? [] : [byValue.soon]), byValue.verified, byValue.old, byValue.az, byValue.za,
   ];
 
   function set(next: Record<string, string>) {
@@ -64,10 +66,14 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
     router.replace(qs ? `/?${qs}` : "/", { scroll: false });
   }
 
+  const wanted = params.get("wanted") === "1";
+  const verified = params.get("verified") === "1";
+  const town = params.get("town") ?? "";
   const tokens: { label: string; clear: Record<string, string> }[] = [];
   if (min) tokens.push({ label: `From $${Number(min).toLocaleString()}`, clear: { min: "" } });
   if (max) tokens.push({ label: `Up to $${Number(max).toLocaleString()}`, clear: { max: "" } });
 
+  if (town) tokens.push({ label: town.split(",")[0], clear: { town: "" } });
   if (within && TOWN_BY_ID[near]) tokens.push({ label: `Within ${within} mi of ${TOWN_BY_ID[near].name.split(",")[0]}`, clear: { near: "", within: "" } });
   else if (TOWN_BY_ID[near]) tokens.push({ label: `From ${TOWN_BY_ID[near].name.split(",")[0]}`, clear: { near: "" } });
 
@@ -131,10 +137,13 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
             </form>
           )}
         </div>
+        <button type="button" className="chip" aria-pressed={wanted} onClick={() => set({ wanted: wanted ? "" : "1" })}>Wanted</button>
+        <button type="button" className="chip" aria-pressed={verified} onClick={() => set({ verified: verified ? "" : "1" })}>Verified</button>
         <SortMenu label="Sort by" options={sortOptions} primary={primarySorts} value={sort} onChange={(v) => set({ sort: v })} />
         {tokens.map((t) => (
           <button key={t.label} type="button" className="chip" onClick={() => set(t.clear)} aria-label={`Clear: ${t.label}`}>{t.label} ✕</button>
         ))}
+        <SaveSearch />
       </div>
     </>
   );

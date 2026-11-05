@@ -33,7 +33,8 @@ const BY_KIND: Record<string, (l: Listing) => string> = {
 
 /** Key facts for the card, falling back to the listing's condition when the details are not there. */
 export function keyFact(l: Listing): string {
-  return BY_KIND[l.kind]?.(l) || l.condition || "";
+  const fact = BY_KIND[l.kind]?.(l) || l.condition || "";
+  return l.wanted ? join("Budget", fact) : fact;
 }
 
 /** "3 mi" under 100 miles, "<1 mi" when very close. */

@@ -8,10 +8,10 @@ import { ListingCard } from "@/components/ListingCard";
 import { AdCard, type Ad } from "@/components/AdCard";
 
 // Test ad for the outside-ad slot; replace with a real ad source later.
-const TEST_AD: Ad = { id: "test-ad", advertiser: "Example Co.", headline: "Your business here: reach tristate shoppers", detail: "Outside ad · same size as a listing", cta: "Learn more", href: "https://example.com" };
+const TEST_AD: Ad = { id: "test-ad", advertiser: "Tristate Market", headline: "Put your business in front of local buyers", detail: "Reach shoppers in your town", cta: "Learn more", href: "/advertise", image: "/ads/advertise.svg" };
 import { CATEGORY_BY_ID } from "@/lib/categories";
 import { DEFAULT_TOWN, TOWN_BY_ID, nearestTown } from "@/lib/places";
-import { getListings, type Sort } from "@/lib/listings";
+import { getListings, getTownCounts, type Sort } from "@/lib/listings";
 
 export default async function Home({ searchParams }: PageProps<"/">) {
   const sp = await searchParams;
@@ -33,10 +33,17 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   }
   const originName = TOWN_BY_ID[origin].name.split(",")[0];
   const defaultSort: Sort = cat === "event" || cat === "sale" ? "soon" : "near";
-  const sort: Sort = (["new", "best", "near", "old", "soon", "low", "high", "az", "za"] as const).find((x) => x === sp.sort) ?? defaultSort;
+  const sort: Sort = (["new", "best", "near", "old", "soon", "verified", "low", "high", "az", "za"] as const).find((x) => x === sp.sort) ?? defaultSort;
   const near = origin;
   const pageNum = typeof sp.page === "string" ? Number(sp.page) || 1 : 1;
-  const { items: listings, total, page, pages } = await getListings({ q, cat, min: num("min"), max: num("max"), sort, page: pageNum, near, within });
+  const wanted = sp.wanted === "1";
+  const verified = sp.verified === "1";
+  const town = typeof sp.town === "string" ? sp.town.slice(0, 80) : "";
+  const [{ items: listings, total, page, pages }, towns] = await Promise.all([
+    getListings({ q, cat, min: num("min"), max: num("max"), sort, page: pageNum, near, within, wanted, verified, town: town || undefined }),
+    getTownCounts({ cat, wanted }),
+  ]);
+  const townHref = (t: string) => { const u = new URLSearchParams(); for (const [k, v] of Object.entries(sp)) if (typeof v === "string" && k !== "page" && k !== "town") u.set(k, v); if (t) u.set("town", t); const qs = u.toString(); return qs ? `/?${qs}` : "/"; };
   const hrefFor = (n: number) => { const u = new URLSearchParams(); for (const [k, v] of Object.entries(sp)) if (typeof v === "string" && k !== "page") u.set(k, v); if (n > 1) u.set("page", String(n)); const qs = u.toString(); return qs ? `/?${qs}` : "/"; };
   if (page > 1 && listings.length === 0) redirect(hrefFor(Math.max(1, pages)));
   const catLabel = cat !== "all" ? CATEGORY_BY_ID[cat]?.label : null;
@@ -56,6 +63,14 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           <Filters origin={origin} defaultSort={defaultSort} />
         </Suspense>
       </div>
+      {(towns.length > 1 || town) && (
+        <nav className="towns" aria-label="Browse by town">
+          <Link href={townHref("")} className={`chip${town ? "" : " on"}`} aria-current={town ? undefined : "true"}>All towns</Link>
+          {towns.map((t) => (
+            <Link key={t.place} href={townHref(t.place)} className={`chip${town === t.place ? " on" : ""}`} aria-current={town === t.place ? "true" : undefined}>{t.place.split(",")[0]}<small>{t.count}</small></Link>
+          ))}
+        </nav>
+      )}
       {listings.length > 0 ? (
         <div className="grid">
           {listings.map((l, i) => (

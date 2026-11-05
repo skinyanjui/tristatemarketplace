@@ -12,6 +12,7 @@ import { supabaseBrowser } from "@/lib/supabase/client";
 /** One-tap first messages, so a buyer can send in two taps. */
 function quickFor(action: Action): string[] {
   if (action.icon === "cal") return ["Is a tour possible this week?", "Is the price negotiable?", "Is it still available?"];
+  if (action.label === "I have this") return ["Is your budget firm?", "Can I send photos?", "Where can we meet?"];
   if (action.label === "Apply") return ["Is the job still open?", "What are the hours?", "Do I need experience?"];
   if (action.label === "RSVP") return ["Is there parking?", "Is it kid friendly?", "Do I need a ticket?"];
   if (action.label === "Claim this") return ["Is it still available?", "Can I pick it up today?", "What time works?"];

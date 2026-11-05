@@ -574,3 +574,19 @@ p, .notice, .empty span, .prose p { text-wrap: pretty; }
 .pill-ad { background: var(--info); color: #fff; }
 .ad-art { position: absolute; inset: 0; display: grid; place-items: center; font-size: 44px; font-weight: 700; color: var(--info); background: var(--info-bg); }
 .ad-who { font-size: var(--fs-sm); font-weight: 600; min-height: 0; color: var(--label2); }
+
+/* Wanted posts, verified sellers and town chips */
+.pill-wanted { background: var(--info-bg); color: var(--info); box-shadow: 0 0 0 1px var(--info-ring); }
+.pill-verified { bottom: 10px; right: 10px; width: 22px; padding: 0; justify-content: center; background: var(--ok); color: #fff; }
+.pill-count.up { bottom: 38px; }
+.towns { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px 0 4px; }
+.towns::-webkit-scrollbar { display: none; }
+.towns .chip { flex: none; white-space: nowrap; }
+.towns .chip small { font-size: var(--fs-cap); font-weight: 600; opacity: .7; margin-left: 4px; }
+.chip[aria-pressed="true"], .chip.on { background: var(--accent-fill); color: #fff; }
+.savedsearches { margin-top: 16px; }
+.sslist { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+.sslist li { display: flex; gap: 8px; align-items: center; }
+.ssrun { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 12px; background: var(--surface); box-shadow: 0 0 0 1px var(--ring-soft); font-size: var(--fs-ui); font-weight: 500; color: var(--label); }
+.ssrun span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card.ad .card-row { justify-content: flex-end; }

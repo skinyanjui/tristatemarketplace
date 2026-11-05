@@ -17,6 +17,9 @@ export type Action = { label: string; short: string; tiny?: string; icon: Icon; 
 const call: Action = { label: "Message seller", short: "Message", icon: "msg", ask: "Hi, is this still available? When could I take a look?" };
 const msg: Action = { label: "Message seller", short: "Message", icon: "msg", ask: "Hi, is this still available?" };
 
+/** Wanted posts: a seller answers a buyer who is looking for something. */
+export const WANTED_ACTION: Action = { label: "I have this", short: "I have this", tiny: "Offer", icon: "check", ask: "Hi, I saw your wanted post. I have what you are looking for:" };
+
 export const CATEGORIES: Category[] = [
   { id: "car", label: "Cars", color: "#1b4f9c", action: call, group: "vehicles" },
   { id: "home", label: "Real estate", color: "#14602b", action: { label: "Request a tour", short: "Tour", icon: "cal", ask: "Hi, I would like to see this home. What days work for a tour?" }, group: "property" },

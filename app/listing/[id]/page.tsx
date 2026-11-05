@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContactSeller } from "@/components/ContactSeller";
+import { WANTED_ACTION } from "@/lib/categories";
 import { Icon } from "@/components/Icon";
 import { CONDITION_LABEL } from "@/lib/condition-labels";
 import { ShareButton } from "@/components/ShareButton";
@@ -54,13 +55,14 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
             <div className="metarow">
               <span className="pill" style={{ position: "static", background: cat.color, color: "#fff" }}>{cat.label}</span>
               {l.sold && <span className="pill" style={{ position: "static", background: "var(--label)", color: "var(--surface)" }}>Sold</span>}
+              {l.wanted && <span className="pill pill-wanted" style={{ position: "static" }}>Wanted</span>}
               <span className="muted metaplace"><Icon name="pin" size={14} /><span>{l.place} · {l.posted}</span></span>
               <ShareButton title={l.title} />
             </div>
             <h1 className="dtitle">{l.title}</h1>
             <div className="mprice">
               <span className="dprice">{l.price}</span>
-              {!l.sold && <a href="#contact" className="btn"><Icon name={cat.action.icon} size={16} color="#fff" />{cat.action.short}</a>}
+              {!l.sold && <a href="#contact" className="btn"><Icon name={(l.wanted ? WANTED_ACTION : cat.action).icon} size={16} color="#fff" />{(l.wanted ? WANTED_ACTION : cat.action).short}</a>}
             </div>
             {facts.length > 1 && (
               <dl className="glance" aria-label="At a glance">
@@ -92,7 +94,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
         </div>
         <aside className="panel" id="contact">
           <div className="dprice">{l.price}</div>
-          <ContactSeller listingId={l.id} sellerId={l.sellerId ?? null} action={cat.action} catId={cat.id} place={l.place} sold={l.sold} />
+          <ContactSeller listingId={l.id} sellerId={l.sellerId ?? null} action={l.wanted ? WANTED_ACTION : cat.action} catId={cat.id} place={l.place} sold={l.sold} />
           <Link href={l.sellerId ? `/seller/${l.sellerId}` : "#contact"} className="seller seller-link" aria-label={`View ${l.seller.name}'s profile`}>
             <span className="avatar" aria-hidden="true">{initials}</span>
             <div className="sellername"><strong>{l.seller.name}</strong><span className="muted"> · {l.seller.meta}</span></div>
