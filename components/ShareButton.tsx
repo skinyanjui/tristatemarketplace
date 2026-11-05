@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Icon } from "./Icon";
 
 /** Native share sheet where the device has one, otherwise copies the link. */
 export function ShareButton({ title }: { title: string }) {
@@ -16,7 +17,7 @@ export function ShareButton({ title }: { title: string }) {
   }
   return (
     <button type="button" className="btn btn-ghost" onClick={share} aria-live="polite">
-      {copied ? "Link copied" : "Share"}
+      {copied ? <><Icon name="check" size={16} />Link copied</> : <><Icon name="share" size={16} />Share</>}
     </button>
   );
 }

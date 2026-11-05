@@ -6,7 +6,7 @@ export default function NotFound() {
       <div className="empty">
         <strong>We could not find that page</strong>
         <span>The listing may have been sold, expired or removed.</span>
-        <Link href="/" className="btn">Browse all listings</Link>
+        <div className="next-row"><Link href="/" className="btn">Browse all listings</Link><Link href="/post" className="btn btn-ghost">Post a listing</Link></div>
       </div>
     </main>
   );

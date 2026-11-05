@@ -19,7 +19,7 @@ export function TabBar() {
       <div className="tabs">
         {TABS.map((t) => (
           <Link key={t.label} href={t.href} className="tab" aria-current={active(t.href) ? "page" : undefined}>
-            <Icon name={t.icon} size={22} stroke={1.9} />
+            <Icon name={t.icon} size={22} />
             <span>{t.label}</span>
           </Link>
         ))}

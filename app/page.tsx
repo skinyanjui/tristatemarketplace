@@ -45,6 +45,10 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         <div className="empty">
           <strong>{q ? `No matches for “${q}”` : "Nothing here yet"}</strong>
           <span>{q ? "Check the spelling, try a simpler word, or clear a filter. New things get posted every day!" : "Try a different category or price range. New things get posted every day!"}</span>
+          <div className="next-row">
+            <Link href="/" className="btn">Clear search and filters</Link>
+            <Link href="/post" className="btn btn-ghost">Post a listing</Link>
+          </div>
         </div>
       )}
       {pages > 1 && (

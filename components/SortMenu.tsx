@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { Icon } from "./Icon";
 
 export type SortOption = { value: string; label: string; hint?: string };
 
@@ -37,7 +38,7 @@ export function SortMenu({ options, value, onChange, label = "Sort" }: {
           {/* Every label is stacked invisibly so the button keeps one width whatever is picked. */}
           {options.map((o) => <strong key={o.value} aria-hidden={o.value !== current.value} className={o.value === current.value ? "" : "ghost"}>{o.label}</strong>)}
         </span>
-        <svg aria-hidden width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        <Icon name="chev" size={14} />
       </button>
       {open && (
         <div id={id} role="menu" aria-label={label} className="sortmenu-pop">
@@ -45,7 +46,7 @@ export function SortMenu({ options, value, onChange, label = "Sort" }: {
             <button key={o.value} type="button" role="menuitemradio" aria-checked={o.value === value} className="sortmenu-item"
               onClick={() => { onChange(o.value); setOpen(false); }}>
               <span>{o.label}{o.hint && <small>{o.hint}</small>}</span>
-              {o.value === value && <svg aria-hidden width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5L20 7" /></svg>}
+              {o.value === value && <Icon name="check" size={16} />}
             </button>
           ))}
         </div>

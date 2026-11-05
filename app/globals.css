@@ -99,7 +99,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 /* ---------- Listing card ---------- */
 .card {
-  position: relative; width: 100%; display: flex; flex-direction: column;
+  position: relative; container-type: inline-size; width: 100%; display: flex; flex-direction: column;
   background: var(--surface); border-radius: 16px; overflow: hidden;
   box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.05), 0 6px 20px rgba(0,0,0,0.05);
 }
@@ -120,8 +120,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .card-body { position: relative; height: 106px; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 0; }
 .card-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 40px; margin-top: 2px; }
 .price { display: inline-flex; align-items: center; min-height: 44px; margin: -2px 0; font-size: 20px; line-height: 28px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.act { position: relative; z-index: 1; flex: none; width: 44px; height: 44px; margin: -2px -4px -2px 0; display: grid; place-items: center; }
-.act span { width: 32px; height: 32px; border-radius: 9999px; background: var(--accent-fill); display: grid; place-items: center; }
+.act { position: relative; z-index: 1; flex: none; height: 44px; margin: -2px 0; display: inline-flex; align-items: center; }
+.act span { height: 32px; padding: 0 12px 0 10px; border-radius: 9999px; background: var(--accent-fill); color: #fff; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; }
+.act-quiet span { padding: 0 12px; background: var(--fill); color: var(--label); }
+.price { flex: 0 1 auto; min-width: 0; }
 .place { display: flex; align-items: center; gap: 4px; font-size: 12.5px; line-height: 18px; font-weight: 500; color: color-mix(in srgb, var(--label) 82%, var(--surface)); min-width: 0; }
 .place svg { flex: none; opacity: 0.85; }
 .place b { font-weight: 600; color: var(--label); }
@@ -273,3 +275,26 @@ a:not([class]) { color: var(--accent-text); }
 .hero.tall { background: var(--fill); }
 .hero.tall > img { object-fit: contain; }
 .prose a, .credits a { text-decoration: underline; text-underline-offset: 2px; }
+
+/* ---------- Next steps (no dead ends) ---------- */
+.next { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.next .btn { width: 100%; }
+.next-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
+.section.next-row { justify-content: flex-start; }
+.linkbtn { border: 0; background: none; padding: 0; font: inherit; color: var(--accent-text); text-decoration: underline; cursor: pointer; }
+.empty .next-row { margin-top: 4px; }
+.act i { font-style: normal; }
+.act .sm { display: none; }
+@container (max-width: 200px) {
+  .act .lg { display: none; }
+  .act .sm { display: inline; }
+  .act span { padding: 0 11px; gap: 0; }
+  .act svg { display: none; }
+  .price { font-size: 17px; letter-spacing: -0.03em; }
+  .card-body { padding-inline: 10px; }
+  .act span { padding: 0 10px; }
+}
+@container (max-width: 172px) {
+  .price { font-size: 14.5px; letter-spacing: -0.04em; }
+  .act span { padding: 0 9px; font-size: 12.5px; }
+}

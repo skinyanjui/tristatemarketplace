@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import Link from "next/link";
 import type { Listing } from "@/lib/types";
 import { ListingCard } from "./ListingCard";
 
@@ -20,7 +21,7 @@ export function SavedList({ all }: { all: Listing[] }) {
   const raw = useSyncExternalStore(subscribe, read, () => "[]");
   const ids = new Set(JSON.parse(raw) as string[]);
   const saved = all.filter((l) => ids.has(l.id));
-  if (!saved.length) return <div className="notice">Nothing saved yet. Tap the heart on anything you like and it will wait for you here.</div>;
+  if (!saved.length) return <div className="notice">Nothing saved yet. Tap the heart on anything you like and it will wait for you here. <Link href="/">Browse listings</Link>.</div>;
   const gone = ids.size - saved.length;
   return (
     <>

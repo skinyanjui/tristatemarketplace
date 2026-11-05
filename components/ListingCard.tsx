@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { categoryOf } from "@/lib/categories";
+import { categoryOf, mapsUrl } from "@/lib/categories";
 import type { Listing } from "@/lib/types";
 import { Icon } from "./Icon";
 import { ListingImage } from "./ListingArt";
@@ -33,9 +33,17 @@ export function ListingCard({ listing }: { listing: Listing }) {
         <h2 className="ctitle">{listing.title}</h2>
         <div className="card-row">
           <span className="price">{listing.price.replace(/\s*–\s*/g, "–").replace(/\s*\/\s*/g, "/")}</span>
-          <Link href={`${href}#contact`} className="act" aria-label={`${cat.action.label}: ${listing.title}`}>
-            <span><Icon name={cat.action.icon} size={18} color="#fff" /></span>
-          </Link>
+          {listing.sold ? (
+            <Link href={`/?cat=${cat.id}`} className="act act-quiet" aria-label={`See more ${cat.label}`}><span>See similar</span></Link>
+          ) : cat.action.map && listing.place ? (
+            <a href={mapsUrl(listing.place)} target="_blank" rel="noopener noreferrer" className="act" aria-label={`${cat.action.label}: ${listing.title} (opens Maps)`}>
+              <span><Icon name={cat.action.icon} size={16} color="#fff" /><i className="lg">{cat.action.short}</i><i className="sm">{cat.action.tiny ?? cat.action.short}</i></span>
+            </a>
+          ) : (
+            <Link href={`${href}#contact`} className="act" aria-label={`${cat.action.label}: ${listing.title}`}>
+              <span><Icon name={cat.action.icon} size={16} color="#fff" /><i className="lg">{cat.action.short}</i><i className="sm">{cat.action.tiny ?? cat.action.short}</i></span>
+            </Link>
+          )}
         </div>
         <div className="place">
           <Icon name="pin" size={13} />

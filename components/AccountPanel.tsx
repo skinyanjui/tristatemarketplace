@@ -92,7 +92,7 @@ function Inbox({ uid }: { uid: string }) {
       .then(({ data }) => setRows((data as Msg[]) ?? []));
   }, [uid]);
   if (!rows) return null;
-  if (!rows.length) return <div className="notice">No messages yet. When a buyer reaches out, you will see it here.</div>;
+  if (!rows.length) return <div className="notice">No messages yet. When a buyer reaches out, you will see it here. <Link href="/">Browse listings</Link> while you wait.</div>;
   return (
     <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
       {rows.map((m) => (

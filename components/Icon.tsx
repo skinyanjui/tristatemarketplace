@@ -12,13 +12,19 @@ const PATHS: Record<string, string> = {
   user: "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
   back: "M15 18l-6-6 6-6",
   photo: "M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM21 15l-5-5L5 21",
+  chev: "m6 9 6 6 6-6",
+  share: "M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v14",
+  x: "M18 6 6 18M6 6l12 12",
   tag: "M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82zM7 7h.01",
 };
 
-export function Icon({ name, size = 18, stroke = 2, color }: { name: string; size?: number; stroke?: number; color?: string }) {
+/** Every icon renders at the same 1.75px line weight, whatever its size. */
+export const STROKE = 1.75;
+
+export function Icon({ name, size = 18, color, fill }: { name: string; size?: number; color?: string; fill?: string; stroke?: number }) {
   return (
-    <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color ?? "currentColor"} strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round">
-      <path d={PATHS[name] ?? ""} />
+    <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill={fill ?? "none"} stroke={color ?? "currentColor"} strokeWidth={STROKE} strokeLinecap="round" strokeLinejoin="round">
+      <path d={PATHS[name] ?? ""} vectorEffect="non-scaling-stroke" />
     </svg>
   );
 }

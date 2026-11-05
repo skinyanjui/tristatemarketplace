@@ -45,7 +45,7 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
             </div>
             <div className="mprice">
               <span className="dprice">{l.price}</span>
-              {!l.sold && <a href="#contact" className="btn">{cat.action.label}</a>}
+              {!l.sold && <a href="#contact" className="btn"><Icon name={cat.action.icon} size={16} color="#fff" />{cat.action.short}</a>}
             </div>
           </div>
           <section className="section">
@@ -61,10 +61,15 @@ export default async function ListingPage({ params }: PageProps<"/listing/[id]">
               ))}
             </dl>
           </section>
+          <nav className="section next-row" aria-label="Keep browsing">
+            <Link href={`/?cat=${cat.id}`} className="btn btn-ghost">More in {cat.label}</Link>
+            <Link href="/" className="btn btn-ghost">All listings</Link>
+            <Link href="/post" className="btn btn-ghost"><Icon name="plus" size={16} />Post your own</Link>
+          </nav>
         </div>
         <aside className="panel" id="contact">
           <div className="dprice">{l.price}</div>
-          <ContactSeller listingId={l.id} sellerId={l.sellerId ?? null} label={cat.action.label} sold={l.sold} />
+          <ContactSeller listingId={l.id} sellerId={l.sellerId ?? null} action={cat.action} catId={cat.id} place={l.place} sold={l.sold} />
           <div className="seller">
             <span className="avatar" aria-hidden="true">{initials}</span>
             <div>
