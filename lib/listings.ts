@@ -113,7 +113,9 @@ export async function getAllListings(): Promise<Listing[]> {
 }
 
 export async function getListing(id: string): Promise<Listing | null> {
-  const { data, error } = await supabaseServer().from("tm_listings").select(COLUMNS).eq("id", id).in("status", ["active", "sold"]).maybeSingle();
+  const { data, error } = await supabaseServer().from("tm_listings").select(`${COLUMNS},lat,lng`).eq("id", id).in("status", ["active", "sold"]).maybeSingle();
   if (error) throw new Error(`Could not load listing: ${error.message}`);
-  return data ? fromRow(data as Row) : null;
+  if (!data) return null;
+  const r = data as unknown as Row & { lat: number | null; lng: number | null };
+  return { ...fromRow(r), lat: r.lat ?? undefined, lng: r.lng ?? undefined };
 }
