@@ -40,12 +40,13 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const wanted = sp.wanted === "1";
   const verified = sp.verified === "1";
   const town = typeof sp.town === "string" ? sp.town.slice(0, 80) : "";
-  const [{ items: listings, total, page, pages }, towns, liveAds] = await Promise.all([
+  const [{ items: listings, total, page, pages }, townData, liveAds] = await Promise.all([
     getListings({ q, cat, min: num("min"), max: num("max"), sort, page: pageNum, near, within, wanted, verified, town: town || undefined }),
     getTownCounts({ cat, wanted }),
     getLiveAds(),
   ]);
   const ad = pickAd(liveAds) ?? HOUSE_AD;
+  const towns = townData.towns;
   const townHref = (t: string) => { const u = new URLSearchParams(); for (const [k, v] of Object.entries(sp)) if (typeof v === "string" && k !== "page" && k !== "town") u.set(k, v); if (t) u.set("town", t); const qs = u.toString(); return qs ? `/?${qs}` : "/"; };
   const hrefFor = (n: number) => { const u = new URLSearchParams(); for (const [k, v] of Object.entries(sp)) if (typeof v === "string" && k !== "page") u.set(k, v); if (n > 1) u.set("page", String(n)); const qs = u.toString(); return qs ? `/?${qs}` : "/"; };
   if (page > 1 && listings.length === 0) redirect(hrefFor(Math.max(1, pages)));
@@ -63,7 +64,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         </div>
         {(towns.length > 1 || town) && (
           <nav className="towns" aria-label="Browse by town">
-            <Link href={townHref("")} className={`chip${town ? "" : " on"}`} aria-current={town ? undefined : "true"}>All towns</Link>
+            <Link href={townHref("")} className={`chip${town ? "" : " on"}`} aria-current={town ? undefined : "true"}>All towns<small>{town ? townData.all : total}</small></Link>
             {towns.map((t) => (
               <Link key={t.place} href={townHref(t.place)} className={`chip${town === t.place ? " on" : ""}`} aria-current={town === t.place ? "true" : undefined}>{t.place.split(",")[0]}<small>{t.count}</small></Link>
             ))}

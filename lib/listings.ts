@@ -141,7 +141,7 @@ export async function getListing(id: string): Promise<Listing | null> {
 }
 
 /** Towns that have listings, with counts, for the quick town chips. Honors the category, search and wanted filters but not the town itself. */
-export async function getTownCounts(opts: { cat?: string; wanted?: boolean; ids?: string[] }): Promise<{ place: string; count: number }[]> {
+export async function getTownCounts(opts: { cat?: string; wanted?: boolean; ids?: string[] }): Promise<{ towns: { place: string; count: number }[]; all: number }> {
   let query = supabaseServer().from("tm_listings").select("place").eq("status", "active").or(`event_date.is.null,event_date.gte.${localToday()}`).limit(2000);
   if (opts.cat && opts.cat !== "all") query = query.eq("kind", opts.cat);
   if (opts.wanted) query = query.eq("wanted", true);
@@ -149,5 +149,7 @@ export async function getTownCounts(opts: { cat?: string; wanted?: boolean; ids?
   const { data } = await query;
   const counts = new Map<string, number>();
   for (const r of (data ?? []) as { place: string }[]) if (r.place) counts.set(r.place, (counts.get(r.place) ?? 0) + 1);
-  return [...counts].map(([place, count]) => ({ place, count })).sort((a, b) => b.count - a.count || a.place.localeCompare(b.place)).slice(0, 10);
+  const all = [...counts.values()].reduce((a, b) => a + b, 0);
+  const towns = [...counts].map(([place, count]) => ({ place, count })).sort((a, b) => b.count - a.count || a.place.localeCompare(b.place)).slice(0, 10);
+  return { towns, all };
 }
