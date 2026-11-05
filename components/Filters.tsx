@@ -4,7 +4,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SortMenu } from "./SortMenu";
 import { useAnchoredPop } from "./useAnchoredPop";
-import { RADII, TOWNS, TOWN_BY_ID } from "@/lib/places";
+import { RADII, TOWN_BY_ID } from "@/lib/places";
+import { PlaceInput, type Picked } from "./PlaceInput";
 
 const SORTS = [
   { value: "new", label: "Newest first" },
@@ -18,7 +19,7 @@ const SORTS = [
 ];
 
 /** Price range and sort, kept in the URL. Active filters show as removable tokens. */
-export function Filters({ origin, defaultSort }: { origin: string; defaultSort: string }) {
+export function Filters({ origin, originLabel, defaultSort }: { origin: string; originLabel: string; defaultSort: string }) {
   const router = useRouter();
   const params = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -34,6 +35,8 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
   const near = params.get("near") ?? "";
   const within = params.get("within") ?? "";
   const [distOpen, setDistOpen] = useState(false);
+  const [picked, setPicked] = useState<Picked | null>(null);
+  const nearName = (id: string) => (TOWN_BY_ID[id]?.name ?? (/^\d{5}$/.test(id) ? (id === origin ? originLabel : `ZIP ${id}`) : "")).split(",")[0];
   const pricePos = useAnchoredPop(open, () => setOpen(false));
   const distPos = useAnchoredPop(distOpen, () => setDistOpen(false));
   const dist = useRef<HTMLDivElement>(null);
@@ -75,8 +78,8 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
   if (max) tokens.push({ label: `Up to $${Number(max).toLocaleString()}`, clear: { max: "" } });
 
   if (town) tokens.push({ label: town.split(",")[0], clear: { town: "" } });
-  if (within && TOWN_BY_ID[near]) tokens.push({ label: `Within ${within} mi of ${TOWN_BY_ID[near].name.split(",")[0]}`, clear: { near: "", within: "" } });
-  else if (TOWN_BY_ID[near]) tokens.push({ label: `From ${TOWN_BY_ID[near].name.split(",")[0]}`, clear: { near: "" } });
+  if (within && nearName(near)) tokens.push({ label: `Within ${within} mi of ${nearName(near)}`, clear: { near: "", within: "" } });
+  else if (nearName(near)) tokens.push({ label: `From ${nearName(near)}`, clear: { near: "" } });
 
   return (
     <>
@@ -118,7 +121,7 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
               onSubmit={(e) => {
                 e.preventDefault();
                 const fd = new FormData(e.currentTarget);
-                set({ near: String(fd.get("near") ?? ""), within: String(fd.get("within") ?? "") });
+                set({ near: picked?.near ?? (near || origin), within: String(fd.get("within") ?? "") });
                 setDistOpen(false);
               }}
             >
@@ -131,11 +134,9 @@ export function Filters({ origin, defaultSort }: { origin: string; defaultSort: 
               </div>
               <div className="field">
                 <label htmlFor="near">From</label>
-                <select id="near" name="near" className="input" defaultValue={near || origin}>
-                  {TOWNS.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
-                </select>
+                <PlaceInput id="near" defaultValue={/^\d{5}$/.test(near) ? near : (TOWN_BY_ID[near || origin]?.name ?? originLabel)} placeholder="ZIP code or town" onPick={(p) => setPicked(p)} />
               </div>
-              <small className="hint">Closest listings to your town show first.</small>
+              <small className="hint">Any US ZIP code works. Closest listings show first.</small>
               <button className="btn">Apply</button>
             </form>
           )}

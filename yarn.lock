@@ -627,6 +627,11 @@
   dependencies:
     csstype "^3.2.2"
 
+"@types/zipcodes@^8.0.5":
+  version "8.0.5"
+  resolved "https://registry.yarnpkg.com/@types/zipcodes/-/zipcodes-8.0.5.tgz#5a32a5a86e48eced57f9f00757e43271509f1f9f"
+  integrity sha512-NxtKCnUa/LJ6kIku6Rl8mkXfpGkZ0y6AG7rh+WHYtaxfhVgi1bDOZDfGVZiY+JxW+GPdvYXmyERB9rd/xa/pEg==
+
 "@typescript-eslint/eslint-plugin@8.72.1":
   version "8.72.1"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz#95e29de63ce7ed793eb1c6efd9f8b802ce808262"
@@ -3059,6 +3064,11 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zipcodes@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/zipcodes/-/zipcodes-8.0.0.tgz#4d124cdeedfc693f1b0ef8060323f206aeb98a9b"
+  integrity sha512-V8NolFaJhsPamGeCv5lJdk60Q7JBiXI6e+8JDksPC1NJWZ0t7g1OFfqVLZb2Nc2F5jmf9JTdYdWJBnIhGBvtbA==
 
 "zod-validation-error@^3.5.0 || ^4.0.0":
   version "4.0.2"

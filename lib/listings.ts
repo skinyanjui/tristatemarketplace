@@ -1,4 +1,4 @@
-import { TOWN_BY_ID } from "./places";
+import { resolveNear } from "./zips";
 import { connection } from "next/server";
 import { localToday } from "./dates";
 import { supabaseServer } from "./supabase/client";
@@ -39,7 +39,7 @@ export async function getListings(opts: Opts = {}): Promise<{ items: Listing[]; 
   const page = Math.max(1, Math.floor(opts.page ?? 1));
   const from = (page - 1) * PAGE_SIZE;
   const sb = supabaseServer();
-  const town = opts.near ? TOWN_BY_ID[opts.near] : undefined;
+  const town = opts.near ? resolveNear(opts.near) ?? undefined : undefined;
   let nearIds: string[] | null = null;
   let nearOrder: Map<string, number> | null = null;
   const nearDist = new Map<string, number>();

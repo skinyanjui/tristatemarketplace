@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- local blob previews cannot use next/image */
 
 import { localToday } from "@/lib/dates";
-import { TOWNS, townFor } from "@/lib/places";
+import { PlaceInput, type Picked } from "@/components/PlaceInput";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Notice } from "@/components/Notice";
@@ -46,6 +46,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
   }, []);
   useEffect(() => () => previews.forEach((u) => URL.revokeObjectURL(u)), [previews]);
   const [known, setKnown] = useState(true);
+  const pickedPlace = useRef<Picked | null>(null);
   const f = FIELDS[cat] ?? DEFAULT;
 
   return (
@@ -78,8 +79,8 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
           const price = raw && /^[\d.,\s–-]+$/.test(raw) ? "$" + raw : raw;
           const { data, error: err } = await sb.from("tm_listings").insert({
             seller_id: uid, seller_name: email.split("@")[0], seller_meta: wanted ? "Private buyer" : "Private seller", wanted, kind: cat,
-            title: String(fd.get("title")).trim(), place: String(fd.get("place")).trim(), price,
-            condition: String(fd.get("cond") ?? ""), lat: townFor(String(fd.get("place") ?? ""))?.lat ?? null, lng: townFor(String(fd.get("place") ?? ""))?.lng ?? null, event_date: (cat === "event" || cat === "sale") ? String(fd.get("date") || "") || null : null, description: String(fd.get("desc") ?? "").trim(), photos,
+            title: String(fd.get("title")).trim(), place: pickedPlace.current?.place ?? String(fd.get("place")).trim(), price,
+            condition: String(fd.get("cond") ?? ""), lat: pickedPlace.current?.lat ?? null, lng: pickedPlace.current?.lng ?? null, event_date: (cat === "event" || cat === "sale") ? String(fd.get("date") || "") || null : null, description: String(fd.get("desc") ?? "").trim(), photos,
           }).select("id").single();
           if (err) throw err;
           dirty.current = false;
@@ -163,9 +164,8 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
         )}
         <div className="field">
           <label htmlFor="place">Location</label>
-          <input id="place" name="place" maxLength={80} onChange={(e) => setKnown(!e.target.value || !!townFor(e.target.value))} className="input" required placeholder="Start typing a town, like Newburgh, IN" list="towns" autoComplete="off" />
-          {!known && <small className="muted">We cannot measure distance for that town yet, so it will not show up in Distance searches.</small>}
-          <datalist id="towns">{TOWNS.map((t) => <option key={t.id} value={t.name} />)}</datalist>
+          <PlaceInput id="place" name="place" required placeholder="ZIP code or town, like 47711 or Newburgh, IN" onPick={(p, text) => { pickedPlace.current = p; setKnown(!text || !!p); }} />
+          {!known && <small className="muted">Pick a suggestion or enter a 5-digit ZIP code so buyers can find this by distance.</small>}
         </div>
         </div>
         <div className="field">

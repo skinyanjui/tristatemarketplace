@@ -13,13 +13,20 @@ import { CATEGORY_BY_ID } from "@/lib/categories";
 import { DEFAULT_TOWN, TOWN_BY_ID, nearestTown } from "@/lib/places";
 import { getListings, getTownCounts, type Sort } from "@/lib/listings";
 import { getLiveAds, pickAd } from "@/lib/ads";
+import { resolveNear } from "@/lib/zips";
 
 export default async function Home({ searchParams }: PageProps<"/">) {
   const sp = await searchParams;
   const q = typeof sp.q === "string" ? sp.q : "";
+  // A 5-digit ZIP code in the search box means "listings near that ZIP": send them to the same URL as the Distance filter.
+  if (/^\d{5}$/.test(q.trim()) && resolveNear(q.trim()) && !sp.near) {
+    const u = new URLSearchParams(); for (const [k, v] of Object.entries(sp)) if (typeof v === "string" && k !== "q" && k !== "page") u.set(k, v);
+    u.set("near", q.trim()); if (!u.has("within")) u.set("within", "25");
+    redirect(`/?${u.toString()}`);
+  }
   const cat = typeof sp.cat === "string" ? sp.cat : "all";
   const num = (k: string) => { const v = sp[k]; const n = typeof v === "string" && v !== "" ? Number(v) : NaN; return Number.isFinite(n) && n >= 0 ? n : undefined; };
-  const chosen = typeof sp.near === "string" && TOWN_BY_ID[sp.near] ? sp.near : undefined;
+  const chosen = typeof sp.near === "string" && resolveNear(sp.near) ? sp.near : undefined;
   const within = num("within");
   // Where "closest" is measured from: the town they picked, else the town nearest to where they are
   // (from the request's location headers), else Evansville. Anyone more than 150 miles away gets Evansville.
@@ -32,7 +39,8 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       if (n.miles <= 150) origin = n.town.id;
     }
   }
-  const originName = TOWN_BY_ID[origin].name.split(",")[0];
+  const originFull = resolveNear(origin)?.name ?? TOWN_BY_ID[DEFAULT_TOWN].name;
+  const originName = originFull.split(",")[0];
   const defaultSort: Sort = cat === "event" || cat === "sale" ? "soon" : "near";
   const sort: Sort = (["new", "best", "near", "old", "soon", "verified", "low", "high", "az", "za"] as const).find((x) => x === sp.sort) ?? defaultSort;
   const near = origin;
@@ -71,7 +79,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           </nav>
         )}
         <Suspense fallback={<div style={{ height: 36 }} />}>
-          <Filters origin={origin} defaultSort={defaultSort} />
+          <Filters origin={origin} originLabel={originFull} defaultSort={defaultSort} />
         </Suspense>
       </div>
       {listings.length > 0 ? (
