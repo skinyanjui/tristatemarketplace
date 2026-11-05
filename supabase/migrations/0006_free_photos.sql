@@ -1,0 +1,9 @@
+-- Free-licensed photos (Wikimedia Commons) for eight more demo listings; credits live in lib/photo-credits.json and /credits. Some titles changed to match the photos.
+update public.tm_listings set photos = array['/listings/crib.jpg'], title = 'Wooden convertible crib with mattress', description = 'Dark wood crib that converts to a toddler bed. Mattress included, smoke-free home.', details = '[["Type","Convertible crib"],["Includes","Mattress"]]' where id = 'crib';
+update public.tm_listings set photos = array['/listings/dresser.jpg'], title = 'Antique dresser with marble top and inlaid drawers', description = 'Two-drawer dresser with a marble top, brass pulls and inlaid wood front. Drawers slide smoothly.', details = '[["Material","Wood with marble top"],["Drawers","2"],["Era","Antique style"]]' where id = 'dresser';
+update public.tm_listings set photos = array['/listings/tractor.jpg'], title = 'John Deere tractor with cab, 4WD, serviced', description = 'Cab tractor with 4WD and a recent service. Hour meter reads 1,420.', details = '[["Brand","John Deere"],["Hours","1,420"],["Drive","4WD"],["Cab","Enclosed"]]' where id = 'jd-tractor';
+update public.tm_listings set photos = array['/listings/mower.jpg'], title = 'Zero-turn riding mower, 54 in deck, serviced this fall', description = 'Zero-turn riding mower with a 54 in deck, serviced this fall. Ready for next season.', details = '[["Type","Zero-turn"],["Deck","54 in"],["Hours","310"]]' where id = 'mower';
+update public.tm_listings set photos = array['/listings/line-cook.jpg'] where id = 'line-cook';
+update public.tm_listings set photos = array['/listings/puppies.jpg'] where id = 'puppies';
+update public.tm_listings set photos = array['/listings/lawn-care.jpg'] where id = 'lawn-care';
+update public.tm_listings set photos = array['/listings/mountain-bike.jpg'] where id = 'trek-bike';
