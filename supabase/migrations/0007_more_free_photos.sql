@@ -1,0 +1,3 @@
+update public.tm_listings set photos = array['/listings/drill-kit.jpg','/listings/drill-kit-2.jpg'], title = 'DeWalt 20V cordless drill and impact driver set' where id = 'dewalt';
+update public.tm_listings set photos = array['/listings/guitar-case.jpg','/listings/guitar-2.jpg'] where id = 'yamaha';
+update public.tm_listings set photos = array['/listings/refrigerator.jpg'], title = 'Side-by-side refrigerator with ice and water dispenser', description = 'Side-by-side refrigerator freezer with an ice and water dispenser. Ice maker works, no dents. Pickup only.', details = '[["Type","Side-by-side"],["Dispenser","Ice and water"],["Condition","Works great"]]' where id = 'fridge';
