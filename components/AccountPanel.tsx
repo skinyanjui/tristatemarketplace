@@ -69,7 +69,7 @@ function Inbox({ uid }: { uid: string }) {
 
 export function AccountPanel() {
   return (
-    <AuthGate note="Sign in with your email to post listings and manage them. No password needed.">
+    <AuthGate title="Sign in to your account" note="Post listings and manage them. We will email you a sign-in link, no password needed.">
       {(s) => (
         <section style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>

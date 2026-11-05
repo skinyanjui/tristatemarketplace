@@ -15,7 +15,7 @@ export function useSession(): Session | null | undefined {
   return session;
 }
 
-export function SignIn({ next = "/account", note }: { next?: string; note?: string }) {
+export function SignIn({ next = "/account", note, title = "Sign in" }: { next?: string; note?: string; title?: string }) {
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [msg, setMsg] = useState("");
@@ -30,10 +30,11 @@ export function SignIn({ next = "/account", note }: { next?: string; note?: stri
     if (error) { setState("error"); setMsg(error.message); } else setState("sent");
   }
 
-  if (state === "sent") return <div className="notice" role="status">Check {email} for a sign-in link. You can close this tab.</div>;
+  if (state === "sent") return <div className="notice" role="status" style={{ maxWidth: 420 }}>Check {email} for a sign-in link. You can close this tab.</div>;
   return (
-    <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      {note && <p style={{ margin: 0 }}>{note}</p>}
+    <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%", maxWidth: 420 }}>
+      <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: "-0.01em" }}>{title}</h2>
+      {note && <p style={{ margin: 0, color: "var(--label2)" }}>{note}</p>}
       <div className="field">
         <label htmlFor="email">Email</label>
         <input id="email" type="email" required autoComplete="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
@@ -44,9 +45,9 @@ export function SignIn({ next = "/account", note }: { next?: string; note?: stri
   );
 }
 
-export function AuthGate({ children, next, note }: { children: (s: Session) => ReactNode; next?: string; note?: string }) {
+export function AuthGate({ children, next, note, title }: { children: (s: Session) => ReactNode; next?: string; note?: string; title?: string }) {
   const session = useSession();
   if (session === undefined) return <div className="notice">Loading…</div>;
-  if (!session) return <SignIn next={next} note={note} />;
+  if (!session) return <SignIn next={next} note={note} title={title} />;
   return <>{children(session)}</>;
 }

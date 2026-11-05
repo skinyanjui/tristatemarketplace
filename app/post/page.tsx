@@ -121,7 +121,7 @@ function PostForm({ uid, email }: { uid: string; email: string }) {
 export default function PostPage() {
   return (
     <main className="form">
-      <AuthGate next="/post" note="Sign in with your email to post a listing. No password needed.">
+      <AuthGate next="/post" title="Sign in to post a listing" note="We will email you a sign-in link. No password needed.">
         {(s) => <PostForm uid={s.user.id} email={s.user.email ?? "neighbor"} />}
       </AuthGate>
     </main>
